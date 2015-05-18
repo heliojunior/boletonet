@@ -616,7 +616,7 @@ namespace BoletoNet
             
             try
             {
-                _headerLote = "23700000         "; //posições 12-13 são espaços e não zeros
+                _headerLote = this.Codigo.ToString() + "00000         "; //posições 12-13 são espaços e não zeros
 
                 if (cedente.CPFCNPJ.Length <= 11)
                     _headerLote += "1";
@@ -676,7 +676,7 @@ namespace BoletoNet
             try
             {
 
-                _headerLote = "237";                        // Código do Banco na Compensação
+                _headerLote = this.Codigo.ToString();                        // Código do Banco na Compensação
                 _headerLote += Lote;                        // Lote de Serviço
                 _headerLote += "1";                         // Tipo de Registro
                 _headerLote += TipoOperacao;                // Tipo de Operação
@@ -717,21 +717,10 @@ namespace BoletoNet
                 _headerLote += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false); //Nome da Empresa
                 _headerLote += Utils.FormatCode("", " ", 40); // Mensagem 1
                 _headerLote += Utils.FormatCode("", " ", 40); // Mensagem 2 
-
                 _headerLote += Utils.FitStringLength(numeroArquivoRemessa.ToString(), 8, 8, '0', 0, true, true, true); //Número Sequencial Remessa/Retorno
                 _headerLote += DateTime.Now.ToString("ddMMyyyy"); //Data de Gravação Remessa/Retorno 
                 _headerLote += Utils.FormatCode("", " ", 8); //Data do Crédito
                 _headerLote += Utils.FormatCode("", " ", 33);
-
-                //_headerLote += Utils.FormatCode(cedente.Endereco.Logradouro, " ", 30); //Edereço
-                //_headerLote += Utils.FormatCode(cedente.Endereco.Numero, "0", 5, true);
-                //_headerLote += Utils.FormatCode(cedente.Endereco.Complemento, " ", 15);
-                //_headerLote += Utils.FormatCode(cedente.Endereco.Cidade, " ", 20);
-                //_headerLote += Utils.FormatCode(cedente.Endereco.CEP, "0", 8, true);
-                //_headerLote += cedente.Endereco.UF; 
-                //_headerLote += Utils.FormatCode("", " ", 8);
-                //_headerLote += Utils.FormatCode("", " ", 10);
-
                 _headerLote = Utils.SubstituiCaracteresEspeciais(_headerLote);
 
                 return _headerLote;
@@ -749,7 +738,7 @@ namespace BoletoNet
                 string _segmentoP;
                 string _nossoNumero;
 
-                _segmentoP = "23700013";
+                _segmentoP = this.Codigo.ToString() + "00013";
                 _segmentoP += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
                 _segmentoP += "P 01";
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
@@ -767,10 +756,7 @@ namespace BoletoNet
 
                 // Importante: Nosso número, alinhar à esquerda com brancos à direita (conforme manual)
                 _segmentoP += Utils.FitStringLength(_nossoNumero, 11, 11, ' ', 0, true, true, false);
-
                 _segmentoP += CalcularDigitoNossoNumero(boleto);
-
-                //_segmentoP += ' '; // Digito verificador
 
                 /* 
                 '1' = Cobrança Simples
@@ -788,14 +774,14 @@ namespace BoletoNet
 
                 // Campo não tratado. Identificação de emissão do boleto. Pode ser branco/espaço, 0, ou:
                 /*
-                 *      '1' = Banco Emite
-                         '2' = Cliente Emite
-                         '3' = Banco Pré-emite e Cliente Complementa (NÃO TRATADO PELO BANCO)
-                         '4' = Banco Reemite (NÃO TRATADO PELO BANCO)
-                         '5' = Banco Não Reemite (NÃO TRATADO PELO BANCO)
-                         '7' = Banco Emitente – Aberta (NÃO TRATADO PELO BANCO)
-                         '8' = Banco Emitente - Auto-envelopável (NÃO TRATADO PELO BANCO)
-                         Os códigos '4' e '5' só serão aceitos para código de movimento para remessa '31' (NÃO TRATADO PELO BANCO)
+                       '1' = Banco Emite
+                        '2' = Cliente Emite
+                        '3' = Banco Pré-emite e Cliente Complementa (NÃO TRATADO PELO BANCO)
+                        '4' = Banco Reemite (NÃO TRATADO PELO BANCO)
+                        '5' = Banco Não Reemite (NÃO TRATADO PELO BANCO)
+                        '7' = Banco Emitente – Aberta (NÃO TRATADO PELO BANCO)
+                        '8' = Banco Emitente - Auto-envelopável (NÃO TRATADO PELO BANCO)
+                        Os códigos '4' e '5' só serão aceitos para código de movimento para remessa '31' (NÃO TRATADO PELO BANCO)
                  */
                 _segmentoP += "2";
 
@@ -815,9 +801,9 @@ namespace BoletoNet
                 _segmentoP += Utils.FitStringLength(boleto.DataDocumento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false);
 
                 /* codigo Juros de Mora
-                 * '1' = Valor por Dia
-                '2' = Taxa Mensal
-                '3' = Isento
+                    '1' = Valor por Dia
+                    '2' = Taxa Mensal
+                    '3' = Isento
                 */
 
                 if (boleto.JurosMora > 0)
@@ -852,19 +838,18 @@ namespace BoletoNet
                 _segmentoP += Utils.FormatCode("", "0", 15);
                 _segmentoP += Utils.FitStringLength(boleto.NumeroDocumento, 25, 25, ' ', 0, true, true, false);
 
-                //alterado por marcelhsouza em 28/03/2013
-                //O Banco do Brasil trata somente os códigos '1' – Protestar dias corridos, '2' – Protestar dias úteis, e '3' – Não protestar.
+                // trata somente os códigos '1' – Protestar dias corridos, '2' – Protestar dias úteis, e '3' – Não protestar.
 
                 /*
-                 '1' = Protestar Dias Corridos
-                '2' = Protestar Dias Úteis
-                '3' = Não Protestar
-                ‘4’ = Protestar Fim Falimentar - Dias Úteis
-                ‘5’ = Protestar Fim Falimentar - Dias Corridos
-                ‘8’ = Negativação sem Protesto (NÃO TRATADO PELO BANCO)
-                '9' = Cancelamento Protesto Automático
-                (somente válido p/ CódigoMovimento Remessa = '31' - Descrição C004)
-                 * */
+                    '1' = Protestar Dias Corridos
+                    '2' = Protestar Dias Úteis
+                    '3' = Não Protestar
+                    ‘4’ = Protestar Fim Falimentar - Dias Úteis
+                    ‘5’ = Protestar Fim Falimentar - Dias Corridos
+                    ‘8’ = Negativação sem Protesto (NÃO TRATADO PELO BANCO)
+                    '9' = Cancelamento Protesto Automático
+                    (somente válido p/ CódigoMovimento Remessa = '31' - Descrição C004)
+                */
                 string codigo_protesto = "3";
                 string dias_protesto = "00";
 
@@ -885,12 +870,7 @@ namespace BoletoNet
                             dias_protesto = "00";
                             break;
                         default:
-                            /*codigo_protesto = "3"; 
-                            dias_protesto = "00";*/
                             break;
-                        /*
-                         * Bloco do "default" comentado por Jéferson, jefhtavares em 26/11 se fossem adicionadas mais de duas instruções e a instrução de protesto fosse a última a mesma não iria aparecer no arquivo
-                         */
                     }
                 }
 
@@ -898,20 +878,12 @@ namespace BoletoNet
                 _segmentoP += dias_protesto;
 
                 // '1' = Baixar / Devolver '2' = Não Baixar / Não Devolver (NÃO TRATADO PELO BANCO) '3' = Cancelar Prazo para Baixa / Devolução (somente válido p/ CódigoMovimento Remessa = '31' - Descrição C004)
-                _segmentoP += "0"; // Código para Baixa/Devolução
-
-                _segmentoP += "000"; // Número de Dias para Baixa/Devolução
-
-                _segmentoP += "09"; // Código da Moeda
-
+                _segmentoP += "0";      // Código para Baixa/Devolução
+                _segmentoP += "000";    // Número de Dias para Baixa/Devolução
+                _segmentoP += "09";     // Código da Moeda
                 _segmentoP += Utils.FormatCode("", "0", 10);
-                
                 _segmentoP += " ";
-
-                _segmentoP = Utils.SubstituiCaracteresEspeciais(_segmentoP);
-
-                return _segmentoP;
-
+                return Utils.SubstituiCaracteresEspeciais(_segmentoP);
             }
             catch (Exception ex)
             {
@@ -929,7 +901,7 @@ namespace BoletoNet
 
                 string _segmentoQ;
 
-                _segmentoQ = "23700013";
+                _segmentoQ = this.Codigo.ToString() + "00013";
                 _segmentoQ += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
                 _segmentoQ += "Q 01";
 
@@ -971,7 +943,7 @@ namespace BoletoNet
 
                 string _segmentoR;
 
-                _segmentoR = "23700013";
+                _segmentoR = this.Codigo.ToString() + "00013";
                 _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
                 _segmentoR += "R 01";
                 // Desconto 2
@@ -1061,7 +1033,7 @@ namespace BoletoNet
                 _header = "01REMESSA01COBRANCA       ";
                 _header += Utils.FitStringLength(cedente.Codigo.ToString(), 20, 20, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false).ToUpper();
-                _header += "237";
+                _header += this.Codigo.ToString();
                 _header += "BRADESCO       ";
                 _header += DateTime.Now.ToString("ddMMyy");
                 _header += "        ";
@@ -1397,7 +1369,7 @@ namespace BoletoNet
                 StringBuilder trailerLote = new StringBuilder();
 
                 string LoteServico = "0001";
-                trailerLote.Append("237" + LoteServico + "5"); // fixo
+                trailerLote.Append(this.Codigo.ToString() + LoteServico + "5"); // fixo
                 trailerLote.Append(Utils.FormatCode("", " ", 9));
                 trailerLote.Append(Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true)); // numero de registros do arquivo
 
@@ -1434,7 +1406,7 @@ namespace BoletoNet
             {
                 StringBuilder trailerArquivo = new StringBuilder();
 
-                trailerArquivo.Append("23799999");                     // fixo
+                trailerArquivo.Append(this.Codigo.ToString() + "99999");                     // fixo
                 trailerArquivo.Append(Utils.FormatCode("", " ", 9));
                 trailerArquivo.Append("000001");                       //lotes do arquivo
                 trailerArquivo.Append(Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true)); // numero de registros do arquivo
