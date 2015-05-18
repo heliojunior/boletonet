@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using BoletoNet;
 using Microsoft.VisualBasic;
+using System.Text;
 
 [assembly: WebResource("BoletoNet.Imagens.237.jpg", "image/jpg")]
 
@@ -590,7 +591,7 @@ namespace BoletoNet
                 {
 
                     case TipoArquivo.CNAB240:
-                        _header = GerarHeaderRemessaCNAB240();
+                        _header = GerarHeaderRemessaCNAB240(numeroConvenio,cedente, numeroArquivoRemessa);
                         break;
                     case TipoArquivo.CNAB400:
                         _header = GerarHeaderRemessaCNAB400(int.Parse(numeroConvenio), cedente, numeroArquivoRemessa);
@@ -608,10 +609,447 @@ namespace BoletoNet
             }
         }
 
-        public string GerarHeaderRemessaCNAB240()
+        #region Remessa240 - Específicos
+        public string GerarHeaderRemessaCNAB240(string numeroConvenio, Cedente cedente, int numeroArquivoRemessa)
+        {
+            string _headerLote = "";
+            
+            try
+            {
+                _headerLote = "23700000         "; //posições 12-13 são espaços e não zeros
+
+                if (cedente.CPFCNPJ.Length <= 11)
+                    _headerLote += "1";
+                else
+                    _headerLote += "2";
+
+                _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true);
+
+                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 9, 9, '0', 0, true, true, true); // Código do Convênio no Banco ??????? Verificar se tá certo
+                ConvenioFormatatado += "0014";
+                // O Código da carteira é dividida em 2 partes:
+                // - nº da carteira 9(02)
+                // - variação (se houver) 9(03)
+                if (cedente.Carteira.Length == 2)
+                    ConvenioFormatatado += cedente.Carteira.ToString() + "000  ";
+                else
+                    ConvenioFormatatado += cedente.Carteira.Replace("-", "") + "  ";
+
+                _headerLote += Utils.FormatCode(ConvenioFormatatado, "0", 20, true); //
+
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
+                // Dígito verificador  da Agência/Conta.  
+                _headerLote += " ";
+                _headerLote += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false);
+                _headerLote += Utils.FormatCode("", " ", 30); // nome do banco
+                _headerLote += Utils.FormatCode("", " ", 10);
+
+                _headerLote += "1"; // fixo - '1' = Remessa, '2' = Retorno
+                _headerLote += DateTime.Now.ToString("ddMMyyyy");
+                _headerLote += DateTime.Now.ToString("HHmmss");
+                _headerLote += Utils.FitStringLength(numeroArquivoRemessa.ToString(), 6, 1, '0', 0, true, true, true);
+                _headerLote += "080"; // layout do arquivo-
+                _headerLote += Utils.FormatCode("", " ", 5); //densidade da gravação
+                _headerLote += Utils.FormatCode("", " ", 40);
+                _headerLote += Utils.FormatCode("", " ", 29);
+
+                _headerLote = Utils.SubstituiCaracteresEspeciais(_headerLote);
+
+                return _headerLote;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao gerar HEADER do arquivo de remessa do CNAB240.", ex);
+            }
+        }
+
+        public string GerarHeaderLoteRemessaCNAB240(string numeroConvenio, Cedente cedente, int numeroArquivoRemessa)
+        {
+            /* Arquivo LAY-OUT CNAB 240 FEBRABAN VERSÃO 8.0 DE 31/08/2004. */
+            string _headerLote = "";
+            string Lote = "0001";
+            string TipoOperacao = "C";
+
+            try
+            {
+
+                _headerLote = "237";                        // Código do Banco na Compensação
+                _headerLote += Lote;                        // Lote de Serviço
+                _headerLote += "1";                         // Tipo de Registro
+                _headerLote += TipoOperacao;                // Tipo de Operação
+                _headerLote += "01";                        // Tipo de Serviço
+                _headerLote += "  ";                        // posições 12-13 são espaços e não zeros
+                _headerLote += "042";                       // Nº da Versão do Layout do Lote
+                _headerLote += " ";                         // Uso Exclusivo Febraban
+
+                if (cedente.CPFCNPJ.Length <= 11)           // Tipo de Inscrição da Empresa
+                    _headerLote += "1";
+                else
+                    _headerLote += "2";
+
+                _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true); // Nº de Inscrição da Empresa
+                
+                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 9, 9, '0', 0, true, true, true); // Código do Convênio no Banco ??????? Verificar se tá certo
+                ConvenioFormatatado += "0014";
+                // O Código da carteira é dividida em 2 partes:
+                // - nº da carteira 9(02)
+                // - variação (se houver) 9(03)
+                if (cedente.Carteira.Length == 2)
+                    ConvenioFormatatado += cedente.Carteira.ToString() + "000  ";
+                else
+                    ConvenioFormatatado += cedente.Carteira.Replace("-", "") + "  ";
+
+                _headerLote += Utils.FormatCode(ConvenioFormatatado,"0" ,20,true); //
+
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);            // Agência Mantenedora da Conta
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);      // Dígito Verificador da Conta
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);            // Número da Conta Corrente
+                _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);        // Dígito Verificador da Conta
+
+                if (cedente.ContaBancaria.DigitoConta.Length > 1) //Dígito Verificador da Ag/Conta
+                    _headerLote += cedente.ContaBancaria.DigitoConta.Substring(1,1); 
+                else
+                    _headerLote += " "; 
+
+                _headerLote += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false); //Nome da Empresa
+                _headerLote += Utils.FormatCode("", " ", 40); // Mensagem 1
+                _headerLote += Utils.FormatCode("", " ", 40); // Mensagem 2 
+
+                _headerLote += Utils.FitStringLength(numeroArquivoRemessa.ToString(), 8, 8, '0', 0, true, true, true); //Número Sequencial Remessa/Retorno
+                _headerLote += DateTime.Now.ToString("ddMMyyyy"); //Data de Gravação Remessa/Retorno 
+                _headerLote += Utils.FormatCode("", " ", 8); //Data do Crédito
+                _headerLote += Utils.FormatCode("", " ", 33);
+
+                //_headerLote += Utils.FormatCode(cedente.Endereco.Logradouro, " ", 30); //Edereço
+                //_headerLote += Utils.FormatCode(cedente.Endereco.Numero, "0", 5, true);
+                //_headerLote += Utils.FormatCode(cedente.Endereco.Complemento, " ", 15);
+                //_headerLote += Utils.FormatCode(cedente.Endereco.Cidade, " ", 20);
+                //_headerLote += Utils.FormatCode(cedente.Endereco.CEP, "0", 8, true);
+                //_headerLote += cedente.Endereco.UF; 
+                //_headerLote += Utils.FormatCode("", " ", 8);
+                //_headerLote += Utils.FormatCode("", " ", 10);
+
+                _headerLote = Utils.SubstituiCaracteresEspeciais(_headerLote);
+
+                return _headerLote;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do HEADER DE LOTE do arquivo de REMESSA.", ex);
+            }
+        }
+
+        public override string GerarDetalheSegmentoPRemessa(Boleto boleto, int numeroRegistro, string numeroConvenio)
+        {
+            try
+            {
+                string _segmentoP;
+                string _nossoNumero;
+
+                _segmentoP = "23700013";
+                _segmentoP += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
+                _segmentoP += "P 01";
+                _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
+                _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
+                _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
+                _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
+                // Dígito verificador  da Agência/Conta.  Campo não tratado pelo BB.  Informar ESPAÇO ou ZERO.
+                _segmentoP += " "; // jefhtavares O banco não aceita mais esse campo como 0 (zero), o campo deverá ser enviado em branco
+
+                boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11); 
+                _nossoNumero = boleto.NossoNumero;
+
+                _segmentoP += Utils.FormatCode("", " ", 3); // Identificação do Produto
+                _segmentoP += Utils.FormatCode("", " ", 5); //Zeros
+
+                // Importante: Nosso número, alinhar à esquerda com brancos à direita (conforme manual)
+                _segmentoP += Utils.FitStringLength(_nossoNumero, 11, 11, ' ', 0, true, true, false);
+
+                _segmentoP += CalcularDigitoNossoNumero(boleto);
+
+                //_segmentoP += ' '; // Digito verificador
+
+                /* 
+                '1' = Cobrança Simples
+                '2' = Cobrança Vinculada
+                '3' = Cobrança Caucionada
+                '4' = Cobrança Descontada
+                */
+                _segmentoP += "1"; //Cobrança Simples
+                //_segmentoP += boleto.Carteira;
+
+                //Forma de cadastramento do título no banco. Pode ser branco/espaço, 0, 1=cobrança registrada, 2=sem registro.
+                _segmentoP += boleto.TipoModalidade;
+                //Tipo de documento. Pode ser branco, 0, 1=tradicional, 2=escritural.
+                _segmentoP += "1"; // ???? Verificar daonde carregar
+
+                // Campo não tratado. Identificação de emissão do boleto. Pode ser branco/espaço, 0, ou:
+                /*
+                 *      '1' = Banco Emite
+                         '2' = Cliente Emite
+                         '3' = Banco Pré-emite e Cliente Complementa (NÃO TRATADO PELO BANCO)
+                         '4' = Banco Reemite (NÃO TRATADO PELO BANCO)
+                         '5' = Banco Não Reemite (NÃO TRATADO PELO BANCO)
+                         '7' = Banco Emitente – Aberta (NÃO TRATADO PELO BANCO)
+                         '8' = Banco Emitente - Auto-envelopável (NÃO TRATADO PELO BANCO)
+                         Os códigos '4' e '5' só serão aceitos para código de movimento para remessa '31' (NÃO TRATADO PELO BANCO)
+                 */
+                _segmentoP += "2";
+
+                /*
+                 *   '1' = Banco Distribui
+                     '2' = Cliente Distribui
+                     ‘3’ = Banco envia e-mail (NÃO TRATADO PELO BANCO)
+                     ‘4’ = Banco envia SMS (NÃO TRATADO PELO BANCO)
+                 */
+                _segmentoP += "2";
+                _segmentoP += Utils.FitStringLength(boleto.NumeroDocumento, 15, 15, ' ', 0, true, true, false);
+                _segmentoP += Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false);
+                _segmentoP += Utils.FitStringLength(boleto.ValorBoleto.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
+                _segmentoP += "00000 ";
+                _segmentoP += Utils.FitStringLength(boleto.EspecieDocumento.Codigo.ToString(), 2, 2, '0', 0, true, true, true);
+                _segmentoP += "N";
+                _segmentoP += Utils.FitStringLength(boleto.DataDocumento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false);
+
+                /* codigo Juros de Mora
+                 * '1' = Valor por Dia
+                '2' = Taxa Mensal
+                '3' = Isento
+                */
+
+                if (boleto.JurosMora > 0)
+                {
+                    _segmentoP += "1";
+                    _segmentoP += Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
+                    _segmentoP += Utils.FitStringLength(boleto.JurosMora.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
+                }
+                else if (boleto.JurosPermanente)
+                {
+                    _segmentoP += "1";
+                    _segmentoP += Utils.FormatCode("", "0", 8);
+                    _segmentoP += Utils.FormatCode("", "0", 15);
+                }
+                else
+                {
+                    _segmentoP += "3";
+                    _segmentoP += Utils.FormatCode("", "0", 8);
+                    _segmentoP += Utils.FormatCode("", "0", 15);
+                }
+
+                if (boleto.ValorDesconto > 0)
+                {
+                    _segmentoP += "1";
+                    _segmentoP += Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
+                    _segmentoP += Utils.FitStringLength(boleto.ValorDesconto.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
+                }
+                else
+                    _segmentoP += Utils.FormatCode("", "0", 24);
+
+                _segmentoP += Utils.FormatCode("", "0", 15);
+                _segmentoP += Utils.FormatCode("", "0", 15);
+                _segmentoP += Utils.FitStringLength(boleto.NumeroDocumento, 25, 25, ' ', 0, true, true, false);
+
+                //alterado por marcelhsouza em 28/03/2013
+                //O Banco do Brasil trata somente os códigos '1' – Protestar dias corridos, '2' – Protestar dias úteis, e '3' – Não protestar.
+
+                /*
+                 '1' = Protestar Dias Corridos
+                '2' = Protestar Dias Úteis
+                '3' = Não Protestar
+                ‘4’ = Protestar Fim Falimentar - Dias Úteis
+                ‘5’ = Protestar Fim Falimentar - Dias Corridos
+                ‘8’ = Negativação sem Protesto (NÃO TRATADO PELO BANCO)
+                '9' = Cancelamento Protesto Automático
+                (somente válido p/ CódigoMovimento Remessa = '31' - Descrição C004)
+                 * */
+                string codigo_protesto = "3";
+                string dias_protesto = "00";
+
+                foreach (Instrucao_Bradesco instrucao in boleto.Instrucoes)
+                {
+                    switch ((EnumInstrucoes_Bradesco)instrucao.Codigo)
+                    {
+                        case EnumInstrucoes_Bradesco.ProtestarAposNDiasCorridos:
+                            codigo_protesto = "1";
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '1' – é possível, de 6 a 29 dias
+                            break;
+                        case EnumInstrucoes_Bradesco.ProtestarAposNDiasUteis:
+                            codigo_protesto = "2";
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '2' – é possível, 3º, 4º ou 5º dia útil
+                            break;
+                        case EnumInstrucoes_Bradesco.NaoProtestar:
+                            codigo_protesto = "3";
+                            dias_protesto = "00";
+                            break;
+                        default:
+                            /*codigo_protesto = "3"; 
+                            dias_protesto = "00";*/
+                            break;
+                        /*
+                         * Bloco do "default" comentado por Jéferson, jefhtavares em 26/11 se fossem adicionadas mais de duas instruções e a instrução de protesto fosse a última a mesma não iria aparecer no arquivo
+                         */
+                    }
+                }
+
+                _segmentoP += codigo_protesto;
+                _segmentoP += dias_protesto;
+
+                // '1' = Baixar / Devolver '2' = Não Baixar / Não Devolver (NÃO TRATADO PELO BANCO) '3' = Cancelar Prazo para Baixa / Devolução (somente válido p/ CódigoMovimento Remessa = '31' - Descrição C004)
+                _segmentoP += "0"; // Código para Baixa/Devolução
+
+                _segmentoP += "000"; // Número de Dias para Baixa/Devolução
+
+                _segmentoP += "09"; // Código da Moeda
+
+                _segmentoP += Utils.FormatCode("", "0", 10);
+                
+                _segmentoP += " ";
+
+                _segmentoP = Utils.SubstituiCaracteresEspeciais(_segmentoP);
+
+                return _segmentoP;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO P DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
+
+        public override string GerarDetalheSegmentoQRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
+        {
+            try
+            {
+                string _zeros16 = new string('0', 16);
+                string _brancos28 = new string(' ', 28);
+                string _brancos40 = new string(' ', 40);
+
+                string _segmentoQ;
+
+                _segmentoQ = "23700013";
+                _segmentoQ += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
+                _segmentoQ += "Q 01";
+
+                if (boleto.Sacado.CPFCNPJ.Length <= 11)
+                    _segmentoQ += "1";
+                else
+                    _segmentoQ += "2";
+
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.CPFCNPJ, 15, 15, '0', 0, true, true, true);
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.End.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.Bairro.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper();
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.CEP, 8, 8, ' ', 0, true, true, false).ToUpper(); ;
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.Cidade.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper();
+                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.UF, 2, 2, ' ', 0, true, true, false).ToUpper();
+                _segmentoQ += _zeros16;
+                _segmentoQ += _brancos40;
+                _segmentoQ += "000";
+                _segmentoQ += _brancos28;
+
+                _segmentoQ = Utils.SubstituiCaracteresEspeciais(_segmentoQ);
+
+                return _segmentoQ;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO Q DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
+
+
+        public override string GerarDetalheSegmentoRRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
+        {
+            try
+            {
+                string _brancos110 = new string(' ', 110);
+                string _brancos9 = new string(' ', 9);
+
+                string _segmentoR;
+
+                _segmentoR = "23700013";
+                _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
+                _segmentoR += "R 01";
+                // Desconto 2
+                _segmentoR += "0000000000000000000000"; //22 zeros
+                // Desconto 3
+                _segmentoR += "0000000000000000000000"; //24 zeros
+
+                if (boleto.PercMulta > 0)
+                {
+                    // Código da multa 2 - percentual
+                    _segmentoR += "2";
+                }
+                else if (boleto.ValorMulta > 0)
+                {
+                    // Código da multa 1 - valor fixo
+                    _segmentoR += "1";
+                }
+                else
+                {
+                    // Código da multa 0 - sem multa
+                    _segmentoR += "0";
+                }
+
+                _segmentoR += Utils.FitStringLength(boleto.DataMulta.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
+                _segmentoR += Utils.FitStringLength(boleto.ValorMulta.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
+                _segmentoR += _brancos110;
+                _segmentoR += "0000000000000000"; //16 zeros
+                _segmentoR += " "; //1 branco
+                _segmentoR += "000000000000"; //12 zeros
+                _segmentoR += "  "; //2 brancos
+                _segmentoR += "0"; //1 zero
+                _segmentoR += _brancos9;
+
+                _segmentoR = Utils.SubstituiCaracteresEspeciais(_segmentoR);
+
+                return _segmentoR;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO R DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
+
+        public override string GerarHeaderLoteRemessa(string numeroConvenio, Cedente cedente, int numeroArquivoRemessa, TipoArquivo tipoArquivo)
+        {
+            try
+            {
+                string header = " ";
+
+                base.GerarHeaderLoteRemessa(numeroConvenio, cedente, numeroArquivoRemessa, tipoArquivo);
+
+                switch (tipoArquivo)
+                {
+                    case TipoArquivo.CNAB240:
+                        header = GerarHeaderLoteRemessaCNAB240(numeroConvenio, cedente, numeroArquivoRemessa);
+                        break;
+                    case TipoArquivo.CNAB400:
+                        header = "";
+                        break;
+                    case TipoArquivo.Outro:
+                        throw new Exception("Tipo de arquivo inexistente.");
+                }
+
+                return header;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do HEADER DO LOTE do arquivo de REMESSA.", ex);
+            }
+        }
+
+
+        public string GerarDetalheRemessaCNAB240()
         {
             throw new NotImplementedException("Função não implementada.");
         }
+        #endregion
 
         public string GerarHeaderRemessaCNAB400(int numeroConvenio, Cedente cedente, int numeroArquivoRemessa)
         {
@@ -645,6 +1083,7 @@ namespace BoletoNet
 
         # region DETALHE
 
+      
         /// <summary>
         /// DETALHE do arquivo CNAB
         /// Gera o DETALHE do arquivo remessa de acordo com o lay-out informado
@@ -676,11 +1115,6 @@ namespace BoletoNet
             {
                 throw new Exception("Erro durante a geração do DETALHE arquivo de REMESSA.", ex);
             }
-        }
-
-        public string GerarDetalheRemessaCNAB240()
-        {
-            throw new NotImplementedException("Função não implementada.");
         }
 
         public string GerarDetalheRemessaCNAB400(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
@@ -947,6 +1381,67 @@ namespace BoletoNet
 
                 return _trailer;
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        public override string GerarTrailerLoteRemessa(int numeroRegistro)
+        {
+            int numeroTitulos = 0;
+
+            try
+            {
+                StringBuilder trailerLote = new StringBuilder();
+
+                string LoteServico = "0001";
+                trailerLote.Append("237" + LoteServico + "5"); // fixo
+                trailerLote.Append(Utils.FormatCode("", " ", 9));
+                trailerLote.Append(Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true)); // numero de registros do arquivo
+
+                /* Totalização da Cobrança Simples */
+                trailerLote.Append(Utils.FitStringLength(numeroTitulos.ToString(), 6, 6, '0', 0, true, true, true)); // numero de registros do arquivo
+                trailerLote.Append(Utils.FormatCode("", " ", 17)); //Somatória dos Valores 15 ,2 ???? verificar se deve ser passado
+
+                /* Totalização da Cobrança Vinculada */
+                trailerLote.Append(Utils.FormatCode("", " ", 6));  // fixo 
+                trailerLote.Append(Utils.FormatCode("", " ", 17));  // fixo 
+
+                /* Totalização da Cobrança Caucionada */
+                trailerLote.Append(Utils.FormatCode("", " ", 6));  // fixo 
+                trailerLote.Append(Utils.FormatCode("", " ", 17));  // fixo 
+
+                /* Totalização da Cobrança Descontada */
+                trailerLote.Append(Utils.FormatCode("", " ", 6));  // fixo 
+                trailerLote.Append(Utils.FormatCode("", " ", 17));  // fixo 
+
+                trailerLote.Append(Utils.FormatCode("", " ", 8));  //  N. do Aviso 
+                trailerLote.Append(Utils.FormatCode("", " ", 117)); // CNAB 
+
+                return Utils.SubstituiCaracteresEspeciais(trailerLote.ToString()); 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        public override string GerarTrailerArquivoRemessa(int numeroRegistro)
+        {
+            try
+            {
+                StringBuilder trailerArquivo = new StringBuilder();
+
+                trailerArquivo.Append("23799999");                     // fixo
+                trailerArquivo.Append(Utils.FormatCode("", " ", 9));
+                trailerArquivo.Append("000001");                       //lotes do arquivo
+                trailerArquivo.Append(Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true)); // numero de registros do arquivo
+                trailerArquivo.Append("000000");                       // fixo
+                trailerArquivo.Append(Utils.FormatCode("", " ", 205)); // fixo
+
+                return Utils.SubstituiCaracteresEspeciais(trailerArquivo.ToString());
             }
             catch (Exception ex)
             {
