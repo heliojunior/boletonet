@@ -96,7 +96,11 @@ namespace BoletoNet
         /// <returns></returns>
         internal static string FormatCode(string text, string with, int length, bool left)
         {
+            if ((length - text.Length) < 0)
+                text = text.Substring(0, length);
+
             length -= text.Length;
+
             if (left)
             {
                 for (int i = 0; i < length; ++i)
