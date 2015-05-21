@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.UI;
 using BoletoNet;
+using System.Text;
 
 [assembly: WebResource("BoletoNet.Imagens.033.jpg", "image/jpg")]
 
@@ -476,7 +477,7 @@ namespace BoletoNet
                 header += "0";
                 header += Utils.FormatCode("", " ", 8);
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
-                header += Utils.FormatCode("", "0", 15);
+                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
                 header += Utils.FormatCode("", "0", 15);
                 header += Utils.FormatCode("", " ", 25);
                 header += Utils.FormatCode(cedente.Nome, " ", 30);
@@ -581,14 +582,15 @@ namespace BoletoNet
             {
                 string header = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
                 header += "0000";
-                header += "0";
+                header += "1"; // Tipo de registro fixo 1
                 header += "R";
-                header += "  ";
+                header += "01"; // Tipo de serviço - fixo 01 (Cobrança)
+                header += "  "; // brancos
                 header += "030";
                 header += " ";
                 header += "0";
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
-                header += Utils.FormatCode("", "0", 15);
+                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
                 header += Utils.FormatCode("", " ", 20);
                 header += Utils.FormatCode("", "0", 15);
                 header += Utils.FormatCode("", " ", 5);
@@ -874,6 +876,289 @@ namespace BoletoNet
         }
 
         #endregion DETALHE REMESSA
+        /// <summary>
+        ///  Versão 2.1 - Agosto/2013
+        /// </summary>
+        /// <param name="boleto"></param>
+        /// <param name="numeroRegistro"></param>
+        /// <param name="numeroConvenio"></param>
+        /// <returns></returns>
+        public override string GerarDetalheSegmentoPRemessa(Boleto boleto, int numeroRegistro, string numeroConvenio)
+        {
+            StringBuilder segmentoP = new StringBuilder();
+            try
+            {
+                string _nossoNumero;
+
+                segmentoP.Append(Utils.FormatCode(Codigo.ToString(), "0", 3, true));
+                segmentoP.Append(Utils.FormatCode("", "0", 4)); //Numero do lote remessa
+                segmentoP.Append("3");
+                segmentoP.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
+                segmentoP.Append("P ");
+
+                /* CODIGO DE MOVIMENTO PARA REMESSA
+                    01 Entrada de título
+                    02 Pedido de baixa
+                    04 Concessão de abatimento
+                    05 Cancelamento de abatimento
+                    06 Alteração de vencimento
+                    07 Alteração da identificação do título na empresa
+                    08 Alteração seu número
+                    09 Pedido de Protesto
+                    18 Pedido de Sustação de Protesto
+                    10 Concessão de Desconto
+                    11 Cancelamento de desconto
+                    31 Alteração de outros dados
+                    98 Não Protestar (Antes de iniciar o ciclo de protesto )
+                */
+                segmentoP.Append("01"); //Código de movimento remessa
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 4, 4, '0', 0, true, true, true));
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true));
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 9, 9, '0', 0, true, true, true));
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true));
+                segmentoP.Append(Utils.FormatCode("", "0", 9)); //Conta cobrança
+                segmentoP.Append("0"); //Digito Conta cobrança
+                segmentoP.Append("  "); //Brancos
+
+                _nossoNumero = boleto.NossoNumero;
+
+                string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);//13
+                segmentoP.Append(nossoNumero);
+
+                /* 
+                '1' = Cobrança Simples (Sem Registro e Eletrônica com Registro)
+                '3' = Cobrança Caucionada (Eletrônica com Registro e Convencional com Registro)
+                '4' = Cobrança Descontada (Eletrônica com Registro)
+                '5' = Cobrança Simples (Rápida com Registro)
+                '6' = Cobrança Caucionada (Rápida com Registro)
+                */
+                segmentoP.Append("1"); //Tipo de cobrança 
+                //_segmentoP += boleto.Carteira;
+
+                //Forma de cadastramento do título no banco. Pode ser branco/espaço, 0, 1=cobrança registrada, 2=sem registro.
+                segmentoP.Append(boleto.TipoModalidade); //Forma de Cadastramento
+
+                //Tipo de documento. Pode ser branco, 0, 1=tradicional, 2=escritural.
+                segmentoP.Append("1"); // ???? Verificar daonde carregar
+                segmentoP.Append("  "); //Brancos
+                
+                segmentoP.Append(Utils.FitStringLength(boleto.NumeroDocumento, 15, 15, ' ', 0, true, true, false));
+             
+                segmentoP.Append(Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false));
+                segmentoP.Append(Utils.FitStringLength(boleto.ValorBoleto.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true));
+                segmentoP.Append("00000 ");
+                segmentoP.Append(Utils.FitStringLength(boleto.EspecieDocumento.Codigo.ToString(), 2, 2, '0', 0, true, true, true));
+                segmentoP.Append("N");
+                segmentoP.Append(Utils.FitStringLength(boleto.DataDocumento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false));
+
+                /* codigo Juros de Mora
+                    '1' = Valor por Dia
+                    '2' = Taxa Mensal
+                    '3' = Isento
+                */
+
+                if (boleto.JurosMora > 0)
+                {
+                    segmentoP.Append("1");
+                    segmentoP.Append(Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false));
+                    segmentoP.Append(Utils.FitStringLength(boleto.JurosMora.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true));
+                }
+                else if (boleto.JurosPermanente)
+                {
+                    segmentoP.Append("1");
+                    segmentoP.Append(Utils.FormatCode("", "0", 8));
+                    segmentoP.Append(Utils.FormatCode("", "0", 15));
+                }
+                else
+                {
+                    segmentoP.Append("3");
+                    segmentoP.Append(Utils.FormatCode("", "0", 8));
+                    segmentoP.Append(Utils.FormatCode("", "0", 15));
+                }
+
+                if (boleto.ValorDesconto > 0)
+                {
+                    segmentoP.Append("1");
+                    segmentoP.Append(Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false));
+                    segmentoP.Append(Utils.FitStringLength(boleto.ValorDesconto.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true));
+                }
+                else
+                    segmentoP.Append(Utils.FormatCode("", "0", 24));
+
+                segmentoP.Append(Utils.FormatCode("", "0", 15));
+                segmentoP.Append(Utils.FormatCode("", "0", 15));
+                segmentoP.Append(Utils.FitStringLength(boleto.NumeroDocumento, 25, 25, ' ', 0, true, true, false));
+
+                /*
+                    0 NAO PROTESTAR
+                    1 PROTESTAR DIAS CORRIDOS
+                    2 PROTESTAR DIAS UTEIS
+                    3 UTILIZAR PERFIL CEDENTE
+                    9 CANCELAMENTO DE PROTESTO AUTOMATICO
+                */
+                string codigo_protesto = "3";
+                string dias_protesto = "00";
+
+                // 0 NAO PROTESTAR
+                // 1 PROTESTAR DIAS CORRIDOS
+                //2 PROTESTAR DIAS UTEIS
+                //3 UTILIZAR PERFIL CEDENTE
+                //9 CANCELAMENTO DE PROTESTO AUTOMATICO
+
+                foreach (Instrucao_Santander instrucao in boleto.Instrucoes)
+                {
+                    switch ((EnumInstrucoes_Santander)instrucao.Codigo)
+                    {
+                        case EnumInstrucoes_Santander.Protestar:
+                            codigo_protesto = "1";
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '1' – é possível, de 6 a 29 dias
+                            break;
+                        case EnumInstrucoes_Santander.BaixarApos15Dias:
+                            codigo_protesto = "2";
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '2' – é possível, 3º, 4º ou 5º dia útil
+                            break;
+                        case EnumInstrucoes_Santander.NaoProtestar:
+                            codigo_protesto = "0";
+                            dias_protesto = "00";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                segmentoP.Append(codigo_protesto);
+                segmentoP.Append(dias_protesto);
+
+                 // 1 BAIXAR / DEVOLVER, 2 NAO BAIXAR / NAO DEVOLVER ,3 UTILIZAR PERFIL CEDENTE
+                segmentoP.Append("0");      // Código para Baixa/Devolução
+                segmentoP.Append("0");
+                segmentoP.Append("00");     // Número de Dias para Baixa/Devolução
+                segmentoP.Append("00");     // Código da Moeda - 00 REAL
+                segmentoP.Append(Utils.FormatCode("", "0", 11));
+
+                return Utils.SubstituiCaracteresEspeciais(segmentoP.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO P DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
+
+        /// <summary>
+        ///  Versão 2.1 - Agosto/2013
+        /// </summary>
+        /// <param name="boleto"></param>
+        /// <param name="numeroRegistro"></param>
+        /// <param name="tipoArquivo"></param>
+        /// <returns></returns>
+        public override string GerarDetalheSegmentoQRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
+        {
+            try
+            {
+                StringBuilder segmentoQ = new StringBuilder();
+
+                segmentoQ.Append(Utils.FormatCode(Codigo.ToString(), "0", 3, true));
+                segmentoQ.Append("0001"); //Numero do lote remessa
+                segmentoQ.Append("3"); // Tipo de registro
+
+                segmentoQ.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
+                segmentoQ.Append("Q ");
+
+                /*
+                    01 Entrada de título
+                    02 Pedido de baixa
+                    04 Concessão de abatimento
+                    05 Cancelamento de abatimento
+                    06 Alteração de vencimento
+                    07 Alteração da identificação do título na empresa
+                    08 Alteração seu número
+                    09 Pedido de Protesto
+                    18 Pedido de Sustação de Protesto
+                    10 Concessão de Desconto
+                    11 Cancelamento de desconto
+                    31 Alteração de outros dados
+                    98 Não Protestar (Antes de iniciar o ciclo de protesto )
+                 */
+                segmentoQ.Append("01"); // codigo do movimento da remessa
+
+                if (boleto.Sacado.CPFCNPJ.Length <= 11)
+                    segmentoQ.Append("1");
+                else
+                    segmentoQ.Append("2");
+
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.CPFCNPJ, 15, 15, '0', 0, true, true, true));
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper());
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.End.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper());
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.Bairro.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper());
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.CEP, 8, 8, ' ', 0, true, true, false).ToUpper()); 
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.Cidade.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper());
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.UF, 2, 2, ' ', 0, true, true, false).ToUpper());
+
+                if (boleto.Sacado.CPFCNPJ.Length <= 11)
+                    segmentoQ.Append("1");
+                else
+                    segmentoQ.Append("2");
+
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.CPFCNPJ, 15, 15, '0', 0, true, true, true));
+                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper());
+
+                segmentoQ.Append("000"); // Identificador de carne 000 Não tem carne - 001 tem carne
+                segmentoQ.Append("000"); // Parcela ou número inicial da parcela
+                segmentoQ.Append("000"); // qtde total de parcelas
+                segmentoQ.Append("000"); // numero do plano
+                segmentoQ.Append(Utils.FormatCode("", " ", 19)); // brancos
+
+                return Utils.SubstituiCaracteresEspeciais(segmentoQ.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO Q DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
+
+        /// <summary>
+        ///  Versão 2.1 - Agosto/2013
+        /// </summary>
+        /// <param name="boleto"></param>
+        /// <param name="numeroRegistro"></param>
+        /// <param name="tipoArquivo"></param>
+        /// <returns></returns>
+        public override string GerarDetalheSegmentoRRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
+        {
+            try
+            {
+                StringBuilder segmentoR = new StringBuilder();
+
+                segmentoR.Append(Utils.FormatCode(Codigo.ToString(), "0", 3, true));
+                segmentoR.Append("0001"); //Numero do lote remessa
+                segmentoR.Append("3"); // Tipo de registro
+
+                segmentoR.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
+                segmentoR.Append("R ");
+                segmentoR.Append("01"); //Código de movimento
+                segmentoR.Append("0");  //Código do desconto 2
+                segmentoR.Append(Utils.FormatCode("", "0", 8));   //data do desconto 2
+                segmentoR.Append(Utils.FormatCode("", "0", 17));  //Valor/Percentual a ser concedido
+                segmentoR.Append(Utils.FormatCode("", " ", 24));  // brancos
+
+                // 1- Valor fixo, 2- Percentual
+                segmentoR.Append("0"); // Código da multa
+                segmentoR.Append(Utils.FormatCode("", "0", 8));   //data da multa
+                segmentoR.Append(Utils.FormatCode("", "0", 17));  // Valor/Percentual a ser aplicado
+                segmentoR.Append(Utils.FormatCode("", " ", 10));
+                segmentoR.Append(Utils.FormatCode("", " ", 40));// Mensagem 3
+                segmentoR.Append(Utils.FormatCode("", " ", 40));// Mensagem 4
+                segmentoR.Append(Utils.FormatCode("", " ", 61));// brancos
+
+                return Utils.SubstituiCaracteresEspeciais(segmentoR.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração do SEGMENTO R DO DETALHE do arquivo de REMESSA.", ex);
+            }
+        }
 
         #region TRAILER CNAB240
 
@@ -899,11 +1184,8 @@ namespace BoletoNet
                 trailer += Utils.FormatCode("", "0", 4, true);
                 trailer += "5";
                 trailer += Utils.FormatCode("", " ", 9);
-                trailer += Utils.FormatCode("", "0", 6, true);
-                trailer += Utils.FormatCode("", "0", 18, true);
-                trailer += Utils.FormatCode("", "0", 18, true);
-                trailer += Utils.FormatCode("", " ", 171);
-                trailer += Utils.FormatCode("", " ", 10);
+                trailer += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
+                trailer += Utils.FormatCode("", " ", 217);
                 trailer = Utils.SubstituiCaracteresEspeciais(trailer);
 
                 return trailer;
@@ -934,8 +1216,8 @@ namespace BoletoNet
                 trailer += "9999";
                 trailer += "9";
                 trailer += Utils.FormatCode("", " ", 9);
-                trailer += Utils.FormatCode("", "0", 6, true);
-                trailer += Utils.FormatCode("", "0", 6, true);
+                trailer += "000001";
+                trailer += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
                 trailer += Utils.FormatCode("", " ", 211);
                 trailer = Utils.SubstituiCaracteresEspeciais(trailer);
 
