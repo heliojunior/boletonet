@@ -192,6 +192,7 @@
     <Compile Include="Enums\TipoOcorrencia.cs" />
     <Compile Include="Enums\TipoInscricao.cs" />
     <Compile Include="Boleto\Boletos.cs" />
+    <Compile Include="Util\ExtensionMethods.cs" />
     <Compile Include="Util\LeitorLinhaPosicao.cs" />
     <Compile Include="Util\Utils.cs" />
   </ItemGroup>
