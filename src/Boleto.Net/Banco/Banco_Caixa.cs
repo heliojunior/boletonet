@@ -798,7 +798,7 @@ namespace BoletoNet
                 // '2' = Sem Cadastramento (Cobrança sem Registro) 
                 header += "2";                                                                          // Tipo de Documento 
                 header += "2";                                                                          // Identificação da Emissão do Bloqueto 
-                header += "2";                                                                          // Identificação da Distribuição
+                header += boleto.Remessa.TipoDistribuicao;                                              // Identificação da Distribuição
                 header += Utils.FormatCode(boleto.NumeroDocumento, "0", 11);                            // Número do Documento de Cobrança 
                 header += "    ";                                                                       // Uso Exclusivo CAIXA
                 header += boleto.DataVencimento.ToString("ddMMyyyy");                                   // Data de Vencimento do Título
@@ -1526,7 +1526,7 @@ namespace BoletoNet
                  * ‘2’ = Beneficiário via Agência CAIXA 
                  * ‘3’ = Pagador via e-mail*/
 
-                detalhe += "2"; //Identificação da Entrega/Distribuição do Bloqueto
+                detalhe += boleto.Remessa.TipoDistribuicao; //Identificação da Entrega/Distribuição do Bloqueto
                 detalhe += "00"; // fixo
 
                 detalhe += Utils.FormatCode(boleto.NumeroDocumento, " ", 25);

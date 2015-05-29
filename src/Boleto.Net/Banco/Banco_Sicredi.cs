@@ -475,9 +475,10 @@ namespace BoletoNet
                 _nossoNumero = boleto.NossoNumero;
 
                 string ano = boleto.DataDocumento.Year.ToString();
-                ano = ano.Substring(ano.Length -1,1); 
-                string nossoNumero = "13" + ano + Utils.FormatCode(boleto.NossoNumero, 16) + Mod11(Utils.FormatCode(boleto.NossoNumero, 16), 9); //20
-                segmentoP.Append(nossoNumero);
+                ano = ano.Substring(ano.Length -2,2); 
+                string nossoNumero = ano + "2" + Utils.FormatCode(boleto.NossoNumero, 5) + Mod11(Utils.FormatCode(boleto.NossoNumero, 5), 9); 
+                segmentoP.Append(Utils.FormatCode(nossoNumero, " ", 20));
+                boleto.NossoNumero = Utils.FormatCode(nossoNumero, 8); 
 
                 /* 
                 '1' = Cobrança Simples (Sem Registro e Eletrônica com Registro)

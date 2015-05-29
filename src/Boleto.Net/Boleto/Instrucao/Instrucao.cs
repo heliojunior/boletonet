@@ -96,6 +96,10 @@ namespace BoletoNet
                     case 756:
                         _IInstrucao = new Instrucao_Sicoob();
                         break;
+                    // sicredi
+                    case 748:
+                        _IInstrucao = new Instrucao_Sicredi();
+                        break;
                     default:
                         throw new Exception("Código do banco não implementando: " + codigoBanco);
                 }

@@ -38,6 +38,16 @@ namespace BoletoNet
             set { _TipoDocumento = value; }
         }
 
+        private string _TipoDistribuicao;
+        /// <summary>
+        /// Utilizado na geração da remessa. 
+        /// Tipo de distribuição do boleto   
+        /// </summary>
+        public string TipoDistribuicao
+        {
+            get { return _TipoDistribuicao; }
+            set { _TipoDistribuicao = value; }
+        }
         private string _CodigoOcorrencia;
         /// <summary>
         /// Código de Ocorrência Utilizado na geração da Remessa.

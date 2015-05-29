@@ -1264,7 +1264,7 @@ namespace BoletoNet
                 // Para carteira 11/12/31/51 utilizar código 1– Banco distribui. 
                 // Para carteira 17, pode ser utilizado código 1 – Banco distribui, 2 – Cliente distribui ou 3 – Banco envia e-mail (nesse caso complementar com registro S), 
                 // de acordo com o que foi cadastrado para a carteira junto ao Banco do Brasil, consulte seu gerente de relacionamento.
-                _segmentoP += "2";
+                _segmentoP += boleto.Remessa.TipoDistribuicao; 
                 _segmentoP += Utils.FitStringLength(boleto.NumeroDocumento, 15, 15, ' ', 0, true, true, false);
                 _segmentoP += Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, ' ', 0, true, true, false);
                 _segmentoP += Utils.FitStringLength(boleto.ValorBoleto.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
