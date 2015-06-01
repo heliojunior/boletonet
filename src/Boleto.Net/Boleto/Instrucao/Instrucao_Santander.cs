@@ -13,7 +13,11 @@ namespace BoletoNet
         NaoBaixar = 04,
         Protestar = 06,
         NaoProtestar = 07,
-        NaoCobrarJurosDeMora = 08
+        NaoCobrarJurosDeMora = 08,
+        JurosDia = 09,
+        Percentual_Multa = 10,
+        DescontoporDia = 11,
+        JurosdeMora =12
     }
 
     #endregion
@@ -39,7 +43,7 @@ namespace BoletoNet
             this.carregar(codigo, 0);
         }
 
-        public Instrucao_Santander(int codigo, int nrDias)
+        public Instrucao_Santander(int codigo, double nrDias)
         {
             this.carregar(codigo, nrDias);
         }
@@ -47,7 +51,7 @@ namespace BoletoNet
 
         #region Metodos Privados
 
-        private void carregar(int idInstrucao, int nrDias)
+        private void carregar(int idInstrucao, double valor)
         {
             try
             {
@@ -69,8 +73,8 @@ namespace BoletoNet
                         break;
                     case EnumInstrucoes_Santander.Protestar:
                         this.Codigo = (int)EnumInstrucoes_Santander.Protestar;
-                        this.Descricao = "Protestar após "+nrDias+" do vencimento";
-                        this.QuantidadeDias = nrDias;
+                        this.Descricao = "Protestar após "+valor+" do vencimento";
+                        this.QuantidadeDias = int.Parse(valor.ToString());
                         break;
                     case EnumInstrucoes_Santander.NaoProtestar:
                         this.Codigo = (int)EnumInstrucoes_Santander.NaoProtestar;
@@ -79,6 +83,22 @@ namespace BoletoNet
                     case EnumInstrucoes_Santander.NaoCobrarJurosDeMora:
                         this.Codigo = (int)EnumInstrucoes_Santander.NaoCobrarJurosDeMora;
                         this.Descricao = "Não cobrar juros de mora";
+                        break;
+                    case EnumInstrucoes_Santander.Percentual_Multa:
+                        this.Codigo = (int)EnumInstrucoes_Santander.Percentual_Multa;
+                        this.Descricao = "Após vencimento cobrar multa de " + valor + " %";
+                        break;
+                    case EnumInstrucoes_Santander.JurosDia:
+                        this.Codigo = (int)EnumInstrucoes_Santander.JurosDia;
+                        this.Descricao = "Após vencimento cobrar R$ " + valor + " por dia de atraso";
+                        break;
+                    case EnumInstrucoes_Santander.JurosdeMora:
+                        this.Codigo = (int)EnumInstrucoes_Santander.JurosdeMora;
+                        this.Descricao = "Juros de mora de "+ valor +"% ao mês";
+                        break;
+                    case EnumInstrucoes_Santander.DescontoporDia:
+                        this.Codigo = (int)EnumInstrucoes_Santander.DescontoporDia;
+                        this.Descricao = "Conceder desconto de R$ " + valor + " por dia de antecipação"; // por dia de antecipação
                         break;
                     default:
                         this.Codigo = 0;
