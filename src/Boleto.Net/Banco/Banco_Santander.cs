@@ -427,7 +427,6 @@ namespace BoletoNet
 
                 switch (tipoArquivo)
                 {
-
                     case TipoArquivo.CNAB240:
                         _header = GerarHeaderRemessaCNAB240(cedente);
                         break;
@@ -478,7 +477,7 @@ namespace BoletoNet
                 header += Utils.FormatCode("", " ", 8);
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
                 header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
-                header += Utils.FormatCode("", "0", 15);
+                header += Utils.FormatCode(cedente.ContaBancaria.Agencia, "0", 4) + Utils.FormatCode(cedente.Convenio.ToString(), "0", 11, true); // Codigo de transmissão
                 header += Utils.FormatCode("", " ", 25);
                 header += Utils.FormatCode(cedente.Nome, " ", 30);
                 header += Utils.FormatCode("BANCO SANTANDER", " ", 30);
@@ -486,7 +485,7 @@ namespace BoletoNet
                 header += "1";
                 header += DateTime.Now.ToString("ddMMyyyy");
                 header += Utils.FormatCode("", " ", 6);
-                header += "0001";
+                header += "000001";
                 header += "040";
                 header += Utils.FormatCode("", " ", 74);
                 return header;
@@ -588,16 +587,15 @@ namespace BoletoNet
                 header += "  "; // brancos
                 header += "030";
                 header += " ";
-                header += "0";
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
                 header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
                 header += Utils.FormatCode("", " ", 20);
-                header += Utils.FormatCode("", "0", 15);
+                header += Utils.FormatCode(cedente.ContaBancaria.Agencia, "0", 4) + Utils.FormatCode(cedente.Convenio.ToString(), "0", 11, true); // Codigo de transmissão
                 header += Utils.FormatCode("", " ", 5);
                 header += Utils.FormatCode(cedente.Nome, " ", 30);
                 header += Utils.FormatCode("", " ", 40);
                 header += Utils.FormatCode("", " ", 40);
-                header += Utils.FormatCode(numeroArquivoRemessa.ToString(), "0", 8);
+                header += Utils.FormatCode(numeroArquivoRemessa.ToString(), "0", 8, true);
                 header += DateTime.Now.ToString("ddMMyyyy");
                 header += Utils.FormatCode("", " ", 41);
                 return header;
@@ -877,7 +875,7 @@ namespace BoletoNet
 
         #endregion DETALHE REMESSA
         /// <summary>
-        ///  Versão 2.1 - Agosto/2013
+        ///  Versão 2.5 Setembro/2014
         /// </summary>
         /// <param name="boleto"></param>
         /// <param name="numeroRegistro"></param>
@@ -891,7 +889,7 @@ namespace BoletoNet
                 string _nossoNumero;
 
                 segmentoP.Append(Utils.FormatCode(Codigo.ToString(), "0", 3, true));
-                segmentoP.Append(Utils.FormatCode("", "0", 4)); //Numero do lote remessa
+                segmentoP.Append("0001"); //Numero do lote remessa
                 segmentoP.Append("3");
                 segmentoP.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
                 segmentoP.Append("P ");
@@ -922,8 +920,9 @@ namespace BoletoNet
 
                 _nossoNumero = boleto.NossoNumero;
 
-                string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);//13
-                segmentoP.Append(nossoNumero);
+                string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
+                segmentoP.Append(nossoNumero + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9)); //13
+                boleto.NossoNumero = nossoNumero; // atualiza o nosso numero, já formatado;
 
                 /* 
                 '1' = Cobrança Simples (Sem Registro e Eletrônica com Registro)
@@ -936,7 +935,16 @@ namespace BoletoNet
                 //_segmentoP += boleto.Carteira;
 
                 //Forma de cadastramento do título no banco. Pode ser branco/espaço, 0, 1=cobrança registrada, 2=sem registro.
-                segmentoP.Append(boleto.TipoModalidade); //Forma de Cadastramento
+                /* 
+                 *  '1' = Cobrança Simples (Sem Registro e Eletrônica com Registro)
+                    '3' = Cobrança Caucionada (Eletrônica com Registro e Convencional com Registro)
+                    „4‟ = Cobrança Descontada (Eletrônica com Registro)
+                    '5' = Cobrança Simples (Rápida com Registro)
+                    „6‟ = Cobrança Caucionada (Rápida com Registro) „7‟ = Transferência de Titularidade - Sem Devolução (Cobrança Simples - Eletrônica com Registro e Rápida com Registro)*
+                    „8‟ = Cobrança Cessão (Eletrônica com Registro)
+                    „9‟ = Transferência de Titularidade - Com Devolução (Cobrança Simples - Eletrônica com Registro e Rápida com Registro)
+                 */
+                segmentoP.Append(boleto.Carteira.Substring(0,1)); //Forma de Cadastramento
 
                 //Tipo de documento. Pode ser branco, 0, 1=tradicional, 2=escritural.
                 segmentoP.Append("1"); // ???? Verificar daonde carregar
@@ -1045,7 +1053,7 @@ namespace BoletoNet
         }
 
         /// <summary>
-        ///  Versão 2.1 - Agosto/2013
+        ///  Versão 2.5 Setembro/2014
         /// </summary>
         /// <param name="boleto"></param>
         /// <param name="numeroRegistro"></param>
@@ -1118,7 +1126,7 @@ namespace BoletoNet
         }
 
         /// <summary>
-        ///  Versão 2.1 - Agosto/2013
+        ///  Versão 2.5 Setembro/2014
         /// </summary>
         /// <param name="boleto"></param>
         /// <param name="numeroRegistro"></param>
@@ -1128,31 +1136,34 @@ namespace BoletoNet
         {
             try
             {
-                StringBuilder segmentoR = new StringBuilder();
+                string _brancos90 = new string(' ', 90);
+                string _brancos61 = new string(' ', 61);
+                string _segmentoR;
 
-                segmentoR.Append(Utils.FormatCode(Codigo.ToString(), "0", 3, true));
-                segmentoR.Append("0001"); //Numero do lote remessa
-                segmentoR.Append("3"); // Tipo de registro
+                _segmentoR = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
+                _segmentoR += "0001";
+                _segmentoR += "3";
+                _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
+                _segmentoR += "R 01";
+                // Desconto 2
+                _segmentoR += "000000000000000000000000"; //24 zeros
+                // Desconto 3
+                _segmentoR += "000000000000000000000000"; //24 zeros
 
-                segmentoR.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
-                segmentoR.Append("R ");
-                segmentoR.Append("01"); //Código de movimento
-                segmentoR.Append("0");  //Código do desconto 2
-                segmentoR.Append(Utils.FormatCode("", "0", 8));   //data do desconto 2
-                segmentoR.Append(Utils.FormatCode("", "0", 17));  //Valor/Percentual a ser concedido
-                segmentoR.Append(Utils.FormatCode("", " ", 24));  // brancos
+                if (boleto.PercMulta > 0)
+                    _segmentoR += "2"; // Código da multa 2 - percentual
+                else if (boleto.ValorMulta > 0)
+                    _segmentoR += "1"; // Código da multa 1 - valor fixo
+                else
+                    _segmentoR += "0"; // Código da multa 0 - sem multa
 
-                // 1- Valor fixo, 2- Percentual
-                segmentoR.Append("0"); // Código da multa
-                segmentoR.Append(Utils.FormatCode("", "0", 8));   //data da multa
-                segmentoR.Append(Utils.FormatCode("", "0", 17));  // Valor/Percentual a ser aplicado
-                segmentoR.Append(Utils.FormatCode("", " ", 10));
-                segmentoR.Append(Utils.FormatCode("", " ", 40));// Mensagem 3
-                segmentoR.Append(Utils.FormatCode("", " ", 40));// Mensagem 4
-                segmentoR.Append(Utils.FormatCode("", " ", 61));// brancos
+                _segmentoR += Utils.FitStringLength(boleto.DataMulta.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
+                _segmentoR += Utils.FitStringLength(boleto.ValorMulta.ToString("0.00").Replace(",", ""), 15, 15, '0', 0, true, true, true);
+                _segmentoR += _brancos90;
+                _segmentoR += _brancos61;
+                _segmentoR = Utils.SubstituiCaracteresEspeciais(_segmentoR);
 
-                return Utils.SubstituiCaracteresEspeciais(segmentoR.ToString());
-
+                return _segmentoR;
             }
             catch (Exception ex)
             {
