@@ -531,9 +531,9 @@ namespace BoletoNet
                 //Para banco SANTANDER, a formatação do campo "Agencia/Identif.Cedente" - por jsoda em 07/05/2012
                 if (Boleto.Banco.Codigo == 33)
                 {
-                    agenciaCodigoCedente = string.Format("{0}-{1}/{2}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6));
+                    agenciaCodigoCedente = string.Format("{0}-{1}/{2}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Utils.FormatCode(Cedente.Codigo.ToString(), 7));
                     if (String.IsNullOrEmpty(Cedente.ContaBancaria.DigitoAgencia))
-                         agenciaCodigoCedente = String.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6));
+                         agenciaCodigoCedente = String.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 7));
                 }
                 else if (Boleto.Banco.Codigo == 399) // para Banco HSBC mostra apenas código Cedente - por Ponce em 08/06/2012
                     agenciaCodigoCedente = Utils.FormatCode(Cedente.Codigo.ToString(), 7);
