@@ -580,7 +580,7 @@ namespace BoletoNet
             try
             {
                 string header = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
-                header += "0000";
+                header += "0001";
                 header += "1"; // Tipo de registro fixo 1
                 header += "R";
                 header += "01"; // Tipo de serviço - fixo 01 (Cobrança)
@@ -914,8 +914,8 @@ namespace BoletoNet
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 9, 9, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true));
-                segmentoP.Append(Utils.FormatCode("", "0", 9)); //Conta cobrança
-                segmentoP.Append("0"); //Digito Conta cobrança
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 9, 9, '0', 0, true, true, true)); //Conta cobrança
+                segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true)); //Digito Conta cobrança
                 segmentoP.Append("  "); //Brancos
 
                 _nossoNumero = boleto.NossoNumero;
@@ -931,20 +931,11 @@ namespace BoletoNet
                 '5' = Cobrança Simples (Rápida com Registro)
                 '6' = Cobrança Caucionada (Rápida com Registro)
                 */
-                segmentoP.Append("1"); //Tipo de cobrança 
+                segmentoP.Append(boleto.Carteira.Substring(0, 1)); //Tipo de cobrança 
                 //_segmentoP += boleto.Carteira;
 
                 //Forma de cadastramento do título no banco. Pode ser branco/espaço, 0, 1=cobrança registrada, 2=sem registro.
-                /* 
-                 *  '1' = Cobrança Simples (Sem Registro e Eletrônica com Registro)
-                    '3' = Cobrança Caucionada (Eletrônica com Registro e Convencional com Registro)
-                    „4‟ = Cobrança Descontada (Eletrônica com Registro)
-                    '5' = Cobrança Simples (Rápida com Registro)
-                    „6‟ = Cobrança Caucionada (Rápida com Registro) „7‟ = Transferência de Titularidade - Sem Devolução (Cobrança Simples - Eletrônica com Registro e Rápida com Registro)*
-                    „8‟ = Cobrança Cessão (Eletrônica com Registro)
-                    „9‟ = Transferência de Titularidade - Com Devolução (Cobrança Simples - Eletrônica com Registro e Rápida com Registro)
-                 */
-                segmentoP.Append(boleto.Carteira.Substring(0,1)); //Forma de Cadastramento
+                segmentoP.Append(Utils.FormatCode(boleto.TipoModalidade, 1)); //Forma de Cadastramento
 
                 //Tipo de documento. Pode ser branco, 0, 1=tradicional, 2=escritural.
                 segmentoP.Append("1"); // ???? Verificar daonde carregar
@@ -1038,11 +1029,11 @@ namespace BoletoNet
                 segmentoP.Append(dias_protesto);
 
                  // 1 BAIXAR / DEVOLVER, 2 NAO BAIXAR / NAO DEVOLVER ,3 UTILIZAR PERFIL CEDENTE
-                segmentoP.Append("0");      // Código para Baixa/Devolução
+                segmentoP.Append("2");      // Código para Baixa/Devolução
                 segmentoP.Append("0");
                 segmentoP.Append("00");     // Número de Dias para Baixa/Devolução
                 segmentoP.Append("00");     // Código da Moeda - 00 REAL
-                segmentoP.Append(Utils.FormatCode("", "0", 11));
+                segmentoP.Append(Utils.FormatCode("", " ", 11));
 
                 return Utils.SubstituiCaracteresEspeciais(segmentoP.ToString());
             }
@@ -1102,13 +1093,9 @@ namespace BoletoNet
                 segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.Cidade.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper());
                 segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Endereco.UF, 2, 2, ' ', 0, true, true, false).ToUpper());
 
-                if (boleto.Sacado.CPFCNPJ.Length <= 11)
-                    segmentoQ.Append("1");
-                else
-                    segmentoQ.Append("2");
-
-                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.CPFCNPJ, 15, 15, '0', 0, true, true, true));
-                segmentoQ.Append(Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper());
+                segmentoQ.Append("0");
+                segmentoQ.Append(Utils.FitStringLength("", 15, 15, '0', 0, true, true, true));
+                segmentoQ.Append(Utils.FitStringLength("", 40, 40, ' ', 0, true, true, false).ToUpper());
 
                 segmentoQ.Append("000"); // Identificador de carne 000 Não tem carne - 001 tem carne
                 segmentoQ.Append("000"); // Parcela ou número inicial da parcela
@@ -1148,7 +1135,7 @@ namespace BoletoNet
                 // Desconto 2
                 _segmentoR += "000000000000000000000000"; //24 zeros
                 // Desconto 3
-                _segmentoR += "000000000000000000000000"; //24 zeros
+                _segmentoR += new string(' ', 24); //24 zeros
 
                 if (boleto.PercMulta > 0)
                     _segmentoR += "2"; // Código da multa 2 - percentual
@@ -1192,7 +1179,7 @@ namespace BoletoNet
             try
             {
                 string trailer = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
-                trailer += Utils.FormatCode("", "0", 4, true);
+                trailer += "0001";
                 trailer += "5";
                 trailer += Utils.FormatCode("", " ", 9);
                 trailer += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
