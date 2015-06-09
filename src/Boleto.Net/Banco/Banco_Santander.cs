@@ -476,7 +476,7 @@ namespace BoletoNet
                 header += "0";
                 header += Utils.FormatCode("", " ", 8);
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
-                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
+                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15,true);
                 header += Utils.FormatCode(cedente.ContaBancaria.Agencia, "0", 4) + Utils.FormatCode(cedente.Convenio.ToString(), "0", 11, true); // Codigo de transmissão
                 header += Utils.FormatCode("", " ", 25);
                 header += Utils.FormatCode(cedente.Nome, " ", 30);
@@ -588,7 +588,7 @@ namespace BoletoNet
                 header += "030";
                 header += " ";
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
-                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15);
+                header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15, true);
                 header += Utils.FormatCode("", " ", 20);
                 header += Utils.FormatCode(cedente.ContaBancaria.Agencia, "0", 4) + Utils.FormatCode(cedente.Convenio.ToString(), "0", 11, true); // Codigo de transmissão
                 header += Utils.FormatCode("", " ", 5);
