@@ -488,6 +488,9 @@ namespace BoletoNet
                 header += "000001";
                 header += "040";
                 header += Utils.FormatCode("", " ", 74);
+
+                header = Utils.SubstituiCaracteresEspeciais(header);
+
                 return header;
 
             }
@@ -598,6 +601,9 @@ namespace BoletoNet
                 header += Utils.FormatCode(numeroArquivoRemessa.ToString(), "0", 8, true);
                 header += DateTime.Now.ToString("ddMMyyyy");
                 header += Utils.FormatCode("", " ", 41);
+
+                header = Utils.SubstituiCaracteresEspeciais(header);
+
                 return header;
             }
             catch (Exception e)
