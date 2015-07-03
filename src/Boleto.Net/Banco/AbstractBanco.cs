@@ -255,6 +255,11 @@ namespace BoletoNet
             throw new NotImplementedException("Função não implementada na classe filha. Implemente na classe que está sendo criada.");
         }
 
+        public virtual HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro)
+        {
+            throw new NotImplementedException("Função não implementada na classe filha. Implemente na classe que está sendo criada."); 
+        }
+
         public virtual DetalheSegmentoWRetornoCNAB240 LerDetalheSegmentoWRetornoCNAB240(string registro)
         {
             var detalhe = new DetalheSegmentoWRetornoCNAB240();

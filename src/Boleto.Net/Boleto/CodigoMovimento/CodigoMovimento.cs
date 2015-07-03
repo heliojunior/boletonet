@@ -90,6 +90,9 @@ namespace BoletoNet
                         //_ICodigoMovimento = new CodigoMovimento_Sudameris();
                         throw new Exception("Código do banco não implementando: " + codigoBanco);
                     //353 - Santander
+                    case 33:
+                        _ICodigoMovimento = new CodigoMovimento_Santander(codigoMovimento);
+                        break;
                     case 353:
                         //_ICodigoMovimento = new CodigoMovimento_Santander();
                         throw new Exception("Código do banco não implementando: " + codigoBanco);

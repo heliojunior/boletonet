@@ -431,6 +431,11 @@ namespace BoletoNet
 
         #region Métodos de Leitura do arquivo de Retorno
 
+        public override HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro)
+        {
+            return _IBanco.LerHeaderArquivoRetornoCNAB240(registro);
+        }
+
         public override DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
         {
             return _IBanco.LerDetalheSegmentoTRetornoCNAB240(registro);

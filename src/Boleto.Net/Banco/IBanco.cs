@@ -99,6 +99,8 @@ namespace BoletoNet
         /// </summary>
         string GerarTrailerLoteRemessa(int numeroRegistro, Boleto boletos);
 
+        HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro);
+
         DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro);
 
         DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro);

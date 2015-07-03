@@ -71,5 +71,7 @@ namespace BoletoNet
         }
 
         #endregion
+
+        public DateTime DataGeracao { get; set; }
     }
 }

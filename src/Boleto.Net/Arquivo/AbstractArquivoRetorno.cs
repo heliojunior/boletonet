@@ -15,6 +15,7 @@ namespace BoletoNet
         private TipoArquivo _tipoArquivo;
         private DetalheRetorno _detalheRetorno;
         private IArquivoRetorno _arquivoRetorno;
+        private HeaderDeArquivoCNAB240 _headerArquivo;
 
         #endregion
 
@@ -56,6 +57,7 @@ namespace BoletoNet
 
         #region Propriedades
 
+
         /// <summary>
         /// Banco
         /// </summary>
@@ -83,6 +85,11 @@ namespace BoletoNet
             protected set { _detalheRetorno = value; }
         }
 
+        public HeaderDeArquivoCNAB240 HeaderArquivo
+        {
+            get { return _headerArquivo; }
+            set { _headerArquivo = value; }
+        }      
         #endregion
 
         #region Métodos
@@ -96,6 +103,13 @@ namespace BoletoNet
             _arquivoRetorno.LerArquivoRetorno(banco, arquivo);
         }
 
+        public virtual void LerArquivoRetorno(IBanco banco, Stream arquivo, bool closeStream = true)
+        {
+            _banco = banco;
+            _arquivoRetorno.LerArquivoRetorno(banco, arquivo);
+        }
+
+         
         #endregion
 
         #region Disparadores de Eventos

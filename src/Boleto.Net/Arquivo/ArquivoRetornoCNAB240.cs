@@ -55,7 +55,7 @@ namespace BoletoNet
             LerArquivoRetorno(banco, StreamArquivo);
         }
 
-        public override void LerArquivoRetorno(IBanco banco, Stream arquivo)
+        public override void LerArquivoRetorno(IBanco banco, Stream arquivo, bool closeStream = true)
         {
             try
              {
@@ -73,6 +73,7 @@ namespace BoletoNet
                         {
                             case "0": //Header de arquivo
                                 OnLinhaLida(null, linha, EnumTipodeLinhaLida.HeaderDeArquivo);
+                                HeaderArquivo = banco.LerHeaderArquivoRetornoCNAB240(linha);
                                 break;
                             case "1": //Header de lote
                                 OnLinhaLida(null, linha, EnumTipodeLinhaLida.HeaderDeLote);
@@ -115,7 +116,9 @@ namespace BoletoNet
                     }
 
                 }
-                stream.Close();
+
+                if (closeStream)
+                    stream.Close();
             }
             catch (Exception ex)
             {

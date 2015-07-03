@@ -27,7 +27,7 @@ namespace BoletoNet
 
         #region Métodos de instância
 
-        public override void LerArquivoRetorno(IBanco banco, Stream arquivo)
+        public override void LerArquivoRetorno(IBanco banco, Stream arquivo, bool closeStream = true)
         {
             try
             {
@@ -48,7 +48,8 @@ namespace BoletoNet
                     linha = stream.ReadLine();
                 }
 
-                stream.Close();
+                if (closeStream)
+                    stream.Close();
             }
             catch (Exception ex)
             {

@@ -232,5 +232,7 @@ namespace BoletoNet
         }
 
         #endregion
+
+        public string CodigoBancoRecebido { get; set; }
     }
 }

@@ -1384,6 +1384,15 @@ namespace BoletoNet
             }
         }
 
+        public override HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro)
+        {
+            HeaderDeArquivoCNAB240 header = new HeaderDeArquivoCNAB240();
+
+            int data = Convert.ToInt32(registro.Substring(143, 8));
+            header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
+
+            return header;
+        }
 
         public override DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
         {
@@ -1400,13 +1409,15 @@ namespace BoletoNet
                 detalhe.DigitoAgencia = registro.Substring(21, 1);
                 detalhe.Conta = Convert.ToInt32(registro.Substring(22, 9));
                 detalhe.DigitoConta = registro.Substring(31, 1);
+                detalhe.CodigoMovimento = new CodigoMovimento(detalhe.CodigoBanco, detalhe.idCodigoMovimento);
 
                 detalhe.NossoNumero = registro.Substring(40, 13);
-                detalhe.CodigoCarteira = Convert.ToInt32(registro.Substring(43, 1));
+                detalhe.CodigoCarteira = Convert.ToInt32(registro.Substring(53, 1));
                 detalhe.NumeroDocumento = registro.Substring(54, 15);
                 int dataVencimento = Convert.ToInt32(registro.Substring(69, 8));
                 detalhe.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(77, 15));
+                detalhe.CodigoBancoRecebido = registro.Substring(92, 3);
                 detalhe.ValorTitulo = valorTitulo / 100;
                 detalhe.IdentificacaoTituloEmpresa = registro.Substring(100, 25);
                 detalhe.TipoInscricao = Convert.ToInt32(registro.Substring(127, 1));
@@ -1415,6 +1426,7 @@ namespace BoletoNet
                 decimal valorTarifas = Convert.ToUInt64(registro.Substring(193, 15));
                 detalhe.ValorTarifas = valorTarifas / 100;
                 detalhe.CodigoRejeicao = registro.Substring(208, 10);
+                
                 detalhe.UsoFebraban = registro.Substring(218, 22);
 
                 return detalhe;
