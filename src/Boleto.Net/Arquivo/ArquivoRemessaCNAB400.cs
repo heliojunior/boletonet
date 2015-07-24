@@ -59,7 +59,11 @@ namespace BoletoNet
                 if (banco.Codigo == 104)
                     PassarInformacoesBoleto = true;
 
-                StreamWriter incluiLinha = new StreamWriter(arquivo, Encoding.GetEncoding("ISO-8859-1"));
+                //StreamWriter incluiLinha = new StreamWriter(arquivo, Encoding.GetEncoding("ISO-8859-1"));
+                //StreamWriter incluiLinha = new StreamWriter(arquivo, Encoding.GetEncoding(1252));
+                //StreamWriter incluiLinha = new StreamWriter(arquivo, Encoding.Default);
+                //StreamWriter incluiLinha = new StreamWriter(arquivo, Encoding.ASCII);
+                StreamWriter incluiLinha = new StreamWriter(arquivo);
                 
                 if (PassarInformacoesBoleto)
                      strline = banco.GerarHeaderRemessa(numeroConvenio, cedente, TipoArquivo.CNAB400, numeroArquivoRemessa, boletos[0]);
