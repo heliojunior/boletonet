@@ -275,17 +275,19 @@
 				type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>imagens\corte.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
 	</data>
-	<!--<data name="Instrucoes"
+	<data name="Instrucoes"
 				xml:space="preserve">
-		<value>&lt;table class="w666"&gt;
+		<value>
+        <!--&lt;table class="w666"&gt;
 				&lt;tr class="cpN"&gt;
 						&lt;td class="At Ac"&gt;@TITULO&lt;/td&gt;
 				&lt;/tr&gt;
 				&lt;tr class="ti"&gt;
 						&lt;td class="At Ac"&gt;@INSTRUCAO&lt;/td&gt;
 				&lt;/tr&gt;
-		&lt;/table&gt;</value>
-	</data>-->
+		&lt;/table&gt;-->
+  </value>
+	</data>
 	<data name="ponto"
 				type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>imagens\ponto.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -418,14 +420,15 @@
 				&lt;tr&gt;&lt;td class="Ar"&gt;Corte na linha pontilhada&lt;/td&gt;&lt;/tr&gt;
 				&lt;tr&gt;&lt;td class="cut" /&gt;&lt;/tr&gt;
 		&lt;/table&gt;
-		&lt;table class="ctN w666"&gt;
+		<!--&lt;table class="ctN w666"&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-		&lt;/table&gt;</value>
+		&lt;/table&gt;-->
+  </value>
 	</data>
 	<data name="ReciboCedenteParte2"
 				xml:space="preserve">
@@ -546,17 +549,19 @@
 				&lt;/tr&gt;
 		&lt;/table&gt;</value>
 	</data>
-	<!--<data name="ReciboSacadoParte1"
+	<data name="ReciboSacadoParte1"
 				xml:space="preserve">
-		<value>&lt;table class="w666"&gt;
+		<value>
+        <!--&lt;table class="w666"&gt;
 				&lt;tr&gt;
 						&lt;td class="ctN cut" /&gt;
 				&lt;/tr&gt;
 				&lt;tr&gt;
 						&lt;td class="cpN Ar"&gt;Recibo do Pagador&lt;/td&gt;
 				&lt;/tr&gt;
-		&lt;/table&gt;</value>
-	</data>-->
+		&lt;/table&gt;-->
+    </value>
+	</data>
 	<data name="ReciboSacadoParte2"
 				xml:space="preserve">
 		<value>&lt;table class="w666"&gt;

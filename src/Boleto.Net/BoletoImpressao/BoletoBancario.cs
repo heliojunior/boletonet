@@ -243,7 +243,7 @@ namespace BoletoNet
                 string instrucoes = "Imprimir em impressora jato de tinta (ink jet) ou laser em qualidade normal. (Não use modo econômico).<br>Utilize folha A4 (210 x 297 mm) ou Carta (216 x 279 mm) - Corte na linha indicada<br>";
 
                 html.Append(Html.Instrucoes);
-                html.Append("<br />");
+                //html.Append("<br />");
 
                 return html.ToString()
                     .Replace("@TITULO", titulo)

@@ -325,6 +325,15 @@ namespace BoletoNet {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Instrucoes {
+            get {
+                return ResourceManager.GetString("Instrucoes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ponto {
@@ -400,19 +409,7 @@ namespace BoletoNet {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;table class=&quot;ctN w666&quot;&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr&gt;&lt;td class=&quot;Ar&quot;&gt;Corte na linha pontilhada&lt;/td&gt;&lt;/tr&gt;
-        ///				&lt;tr&gt;&lt;td class=&quot;cut&quot; /&gt;&lt;/tr&gt;
-        ///		&lt;/table&gt;
-        ///		&lt;table class=&quot;ctN w666&quot;&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///				&lt;tr class=&quot;h13&quot;&gt;&lt;td /&gt;&lt;/tr&gt;
-        ///		&lt;/table&gt;.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string ReciboCedenteParte12 {
             get {
@@ -587,6 +584,15 @@ namespace BoletoNet {
         internal static string ReciboCedenteRelatorioValores {
             get {
                 return ResourceManager.GetString("ReciboCedenteRelatorioValores", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string ReciboSacadoParte1 {
+            get {
+                return ResourceManager.GetString("ReciboSacadoParte1", resourceCulture);
             }
         }
         
