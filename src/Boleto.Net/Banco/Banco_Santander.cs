@@ -190,6 +190,11 @@ namespace BoletoNet
             boleto.NossoNumero = string.Format("{0}-{1}", boleto.NossoNumero, Mod11Santander(boleto.NossoNumero, 9));
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return Mod11Santander(boleto.NossoNumero, 9).ToString();
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             throw new NotImplementedException("Função não implementada.");

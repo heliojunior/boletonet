@@ -345,6 +345,11 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return _dacNossoNumero.ToString();
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             try

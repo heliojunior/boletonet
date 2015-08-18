@@ -327,6 +327,32 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            try
+            {
+                switch (boleto.Carteira.ToUpper())
+                {
+                    case "CSB":
+                        return _dacNossoNumero;
+
+                    case "CNR":
+                        {
+                            string D1 = Mod11Base9(boleto.NossoNumero).ToString();
+                            string D2 = Mod11Base9((int.Parse(boleto.NossoNumero + D1 + "4") + int.Parse(boleto.Cedente.Codigo.ToString()) + int.Parse(boleto.DataVencimento.ToString("ddMMyy"))).ToString()).ToString();
+                            return D1 + D2;
+                        }
+                    default:
+                        throw new NotImplementedException("Não foi possível calcular o digito verificador do nosso número");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao calcular digito verificador do nosso número", ex);
+            }
+        }
+
         # endregion
 
         # region Métodos de geração do arquivo remessa CNAB400

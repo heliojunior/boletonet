@@ -1047,6 +1047,10 @@ namespace BoletoNet
 
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return Mod11BancoBrasil(boleto.NossoNumero).ToString();
+        }
 
         public override void FormataNumeroDocumento(Boleto boleto)
         {

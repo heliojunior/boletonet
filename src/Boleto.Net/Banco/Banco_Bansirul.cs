@@ -90,6 +90,18 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            if (boleto.NossoNumero.Length == 10)
+            {
+                return boleto.NossoNumero.Substring(8, 2);
+            }
+            else
+            {
+                throw new Exception("Erro ao tentar calcular o digito verificador do nosso número");
+            } 
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             throw new NotImplementedException("Função do fomata número do documento não implementada.");

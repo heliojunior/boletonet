@@ -164,6 +164,11 @@ namespace BoletoNet
         {
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return "";
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             boleto.NumeroDocumento = Utils.FormatCode(boleto.NossoNumero, 13);

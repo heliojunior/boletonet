@@ -117,5 +117,7 @@ namespace BoletoNet
         bool ValidarRemessa(TipoArquivo tipoArquivo, string numeroConvenio, IBanco banco, Cedente cedente, Boletos boletos, int numeroArquivoRemessa, out string mensagem);
 
         string ChaveASBACE { get; set; }
+
+        string CalculaDigitoVerificador(Boleto boleto);
     }
 }

@@ -90,6 +90,12 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            //return Mod11Santander(boleto.NossoNumero, 9).ToString();
+            return "";
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             try

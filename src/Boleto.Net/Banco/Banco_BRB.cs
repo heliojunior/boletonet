@@ -86,6 +86,11 @@ namespace BoletoNet
             boleto.NossoNumero = string.Format("{0}{1}{2}", boleto.Categoria, boleto.NossoNumero, Utils.FormatCode(Codigo.ToString(), 3) + boleto.CodigoBarra.Chave.Substring(23, 2));
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return "";
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             boleto.NumeroDocumento = string.Format("{0}", boleto.NumeroDocumento);

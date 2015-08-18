@@ -196,6 +196,11 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return _IBanco.CalculaDigitoVerificador(boleto);
+        }
+
         public override void ValidaBoleto(Boleto boleto)
         {
             //try

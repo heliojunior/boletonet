@@ -360,6 +360,11 @@ namespace BoletoNet
             //boleto.NossoNumero = string.Format("{0}{1}/{2}-{3}", boleto.Carteira, EMISSAO_CEDENTE, boleto.NossoNumero, Mod11Base9(boleto.Carteira + EMISSAO_CEDENTE + boleto.NossoNumero));
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return Mod11Base9(boleto.NossoNumero).ToString();
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
 

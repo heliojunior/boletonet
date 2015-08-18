@@ -226,6 +226,13 @@ namespace BoletoNet
             }
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            string D1 = CalculaDVNossoNumero(boleto.NossoNumero).ToString();
+            string D2 = (CalculaDVNossoNumero(string.Concat(boleto.NossoNumero, D1), 10).ToString());
+            return D1 + D2;
+        }
+
         # endregion
 
         private int CalculaDVNossoNumero(string nossoNumero, short peso = 9)

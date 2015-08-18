@@ -81,6 +81,11 @@ namespace BoletoNet
             //throw new NotImplementedException("Função do fomata nosso número não implementada.");
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return "";
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             throw new NotImplementedException("Função do fomata número do documento não implementada.");

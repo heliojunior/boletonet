@@ -86,6 +86,11 @@ namespace BoletoNet
             boleto.NossoNumero = string.Format("{0}/{1}-{2}", nossoNumero.Substring(0, 2), nossoNumero.Substring(2, 6), nossoNumero.Substring(8));
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return DigNossoNumeroSicredi(boleto);
+        }
+
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             throw new NotImplementedException("Função do fomata número do documento não implementada.");

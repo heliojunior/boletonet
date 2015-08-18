@@ -93,6 +93,11 @@ namespace BoletoNet
             boleto.DigitoNossoNumero = dv.ToString();
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return boleto.DigitoNossoNumero;
+        }
+
         /**
          * FormataCodigoCliente
          * Inclui 0 a esquerda para preencher o tamanho do campo

@@ -138,6 +138,10 @@ namespace BoletoNet
             boleto.NossoNumero = string.Format("{0:0000}{1}", boleto.Cedente.Codigo, boleto.NumeroDocumento);
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return "";
+        }
 
         public override void ValidaBoleto(Boleto boleto)
         {

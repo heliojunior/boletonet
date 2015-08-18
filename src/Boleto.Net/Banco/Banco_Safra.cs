@@ -117,6 +117,11 @@ namespace BoletoNet
             //throw new NotImplementedException("Função não implementada.");
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return "";
+        }
+
         /// <summary>
         ///	O código de barra para cobrança contém 44 posições dispostas da seguinte forma:
         ///    01 a 03 - 3 - Identificação  do  Banco

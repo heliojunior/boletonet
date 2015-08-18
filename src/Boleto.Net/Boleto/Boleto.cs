@@ -290,7 +290,15 @@ namespace BoletoNet
         public string NossoNumero
         {
             get { return _nossoNumero; }
-            set { _nossoNumero = value; }
+            set { 
+                _nossoNumero = value;
+                CalculaDigitoVerificador(_nossoNumero);
+            }
+        }
+
+        private void CalculaDigitoVerificador(string _nossoNumero)
+        {
+            _digitoNossoNumero = this.Banco.CalculaDigitoVerificador(this); ;
         }
 
         /// <summary> 

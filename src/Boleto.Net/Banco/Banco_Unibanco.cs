@@ -176,6 +176,11 @@ namespace BoletoNet
             boleto.NossoNumero = string.Format("{0}-{1}", boleto.NossoNumero, Banco_Unibanco.Mod11(boleto.NossoNumero,true));
         }
 
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return Banco_Unibanco.Mod11(boleto.NossoNumero, true).ToString();
+        }
+
         public override string GerarHeaderRemessa(string numeroConvenio, Cedente cedente, TipoArquivo tipoArquivo, int numeroArquivoRemessa, Boleto boletos)
         {
             throw new NotImplementedException("Função não implementada.");

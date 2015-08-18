@@ -200,17 +200,21 @@ namespace BoletoNet
             return FormataCampoLivre;
         }
 
-
         public override void FormataNumeroDocumento(Boleto boleto)
         {
             throw new NotImplementedException("Função ainda não implementada.");
         }
 
-
         public override void FormataNossoNumero(Boleto boleto)
         {
             boleto.NossoNumero = string.Format("{0}/{1}-{2}", boleto.Carteira, boleto.NossoNumero, boleto.DigitoNossoNumero);
         }
+
+        public string CalculaDigitoVerificador(Boleto boleto)
+        {
+            return boleto.DigitoNossoNumero;
+        }
+
         public override string GerarHeaderRemessa(string numeroConvenio, Cedente cedente, TipoArquivo tipoArquivo, int numeroArquivoRemessa, Boleto boletos)
         {
             throw new NotImplementedException("Função não implementada.");
