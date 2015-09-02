@@ -920,7 +920,8 @@ namespace BoletoNet
                     31 Alteração de outros dados
                     98 Não Protestar (Antes de iniciar o ciclo de protesto )
                 */
-                segmentoP.Append("01"); //Código de movimento remessa
+                segmentoP.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false)); //Código de movimento remessa
+                //segmentoP.Append("01"); //Código de movimento remessa
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 4, 4, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 9, 9, '0', 0, true, true, true));
@@ -1089,7 +1090,8 @@ namespace BoletoNet
                     31 Alteração de outros dados
                     98 Não Protestar (Antes de iniciar o ciclo de protesto )
                  */
-                segmentoQ.Append("01"); // codigo do movimento da remessa
+                //segmentoQ.Append("01"); // codigo do movimento da remessa
+                segmentoQ.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false)); //Código de movimento remessa
 
                 if (boleto.Sacado.CPFCNPJ.Length <= 11)
                     segmentoQ.Append("1");
@@ -1142,7 +1144,9 @@ namespace BoletoNet
                 _segmentoR += "0001";
                 _segmentoR += "3";
                 _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-                _segmentoR += "R 01";
+                _segmentoR += "R ";
+                //_segmentoR += "R 01";
+                _segmentoR += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); //Código de movimento remessa
                 // Desconto 2
                 _segmentoR += "000000000000000000000000"; //24 zeros
                 // Desconto 3

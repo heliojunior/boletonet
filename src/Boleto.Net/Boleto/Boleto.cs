@@ -292,7 +292,9 @@ namespace BoletoNet
             get { return _nossoNumero; }
             set { 
                 _nossoNumero = value;
-                CalculaDigitoVerificador(_nossoNumero);
+                
+                if (!_nossoNumero.Contains("-"))
+                    CalculaDigitoVerificador(_nossoNumero);
             }
         }
 

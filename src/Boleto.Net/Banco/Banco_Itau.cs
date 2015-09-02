@@ -836,7 +836,8 @@ namespace BoletoNet
                 detalhe += "3";
                 detalhe += Utils.FormatCode("", "0", 5, true);
                 detalhe += "A";
-                detalhe += Utils.FormatCode("", "0", 3, true);
+                detalhe += Utils.FormatCode("", "0", 1, true);
+                detalhe += Utils.FormatCode(boleto.Remessa.CodigoOcorrencia, "0", 2, true);
                 detalhe += "000";
                 detalhe += Utils.FormatCode(Codigo.ToString(), "0", 3, true);
                 detalhe += "0";
@@ -934,7 +935,8 @@ namespace BoletoNet
                 if (boleto.Moeda == 9)
                     _detalhe += "I"; //O código da carteira só muda para dois tipos, quando a cobrança for em dólar
 
-                _detalhe += "01"; // Identificação da ocorrência - 01 REMESSA
+                _detalhe += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); // Identificação da ocorrência
+                //_detalhe += "01"; // Identificação da ocorrência - 01 REMESSA
                 _detalhe += Utils.FitStringLength(boleto.NumeroDocumento, 10, 10, ' ', 0, true, true, false);
                 _detalhe += boleto.DataVencimento.ToString("ddMMyy");
                 _detalhe += Utils.FitStringLength(boleto.ValorBoleto.ToString("0.00").Replace(",", ""), 13, 13, '0', 0, true, true, true);

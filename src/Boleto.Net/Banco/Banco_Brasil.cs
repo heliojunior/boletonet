@@ -1187,7 +1187,9 @@ namespace BoletoNet
 
                 _segmentoP = "00100013";
                 _segmentoP += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-                _segmentoP += "P 01";
+                //_segmentoP += "P 01";
+                _segmentoP += "P ";
+                _segmentoP += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); //Código de movimento remessa
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
@@ -1379,7 +1381,8 @@ namespace BoletoNet
 
                 _segmentoQ = "00100013";
                 _segmentoQ += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-                _segmentoQ += "Q 01";
+                _segmentoQ += "Q ";
+                _segmentoQ += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); //Código de movimento remessa
 
                 if (boleto.Sacado.CPFCNPJ.Length <= 11)
                     _segmentoQ += "1";
@@ -1419,7 +1422,8 @@ namespace BoletoNet
 
                 _segmentoR = "00100013";
                 _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-                _segmentoR += "R 01";
+                _segmentoR += "R ";
+                _segmentoR += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); //Código de movimento remessa
                 // Desconto 2
                 _segmentoR += "000000000000000000000000"; //24 zeros
                 // Desconto 3

@@ -469,7 +469,8 @@ namespace BoletoNet
                     ‘16’= Alteração do valor de desconto
                     ‘17’= Não conceder desconto
                 */
-                segmentoP.Append("01"); //Código de movimento remessa
+                segmentoP.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false)); //Código de movimento remessa
+                //segmentoP.Append("01"); //Código de movimento remessa
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true));
                 segmentoP.Append(Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true));
@@ -659,7 +660,8 @@ namespace BoletoNet
                     ‘16’= Alteração do valor de desconto
                     ‘17’= Não conceder desconto
                  */
-                segmentoQ.Append("01"); // codigo do movimento da remessa
+                segmentoQ.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false)); //Código de movimento remessa
+                //segmentoQ.Append("01"); // codigo do movimento da remessa
 
                 if (boleto.Sacado.CPFCNPJ.Length <= 11)
                     segmentoQ.Append("1");
@@ -714,7 +716,8 @@ namespace BoletoNet
 
                 segmentoR.Append(Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true));
                 segmentoR.Append("R ");
-                segmentoR.Append("01"); //Código de movimento de remessa
+                segmentoR.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false)); //Código de movimento remessa
+                //segmentoR.Append("01"); //Código de movimento de remessa
                 segmentoR.Append("0");  //Código do desconto 2
                 segmentoR.Append(Utils.FormatCode("", "0", 8));   //data do desconto 2
                 segmentoR.Append(Utils.FormatCode("", "0", 15));  //Valor/Percentual a ser concedido

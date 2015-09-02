@@ -1190,7 +1190,8 @@ namespace BoletoNet
                 68..Acerto nos dados do rateio de Crédito
                 69..Cancelamento do rateio de crédito.
                 */
-                _detalhe += "01";
+                _detalhe += Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, false); //Código de movimento remessa
+                //_detalhe += "01";
 
                 _detalhe += Utils.Right(boleto.NumeroDocumento, 10, '0', true); //Nº do Documento (10, A)
                 _detalhe += boleto.DataVencimento.ToString("ddMMyy"); //Data do Vencimento do Título (10, N) DDMMAA
