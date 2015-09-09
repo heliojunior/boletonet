@@ -514,7 +514,6 @@ namespace BoletoNet
             get { return _remessa; }
             set { _remessa = value; }
         }
-
         #endregion Properties
 
         public void Valida()

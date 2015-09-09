@@ -59,6 +59,17 @@ namespace BoletoNet
             get { return _CodigoOcorrencia; }
             set { _CodigoOcorrencia = value; }
         }
+
+        private int _idMovimento = 0;
+        /// <summary> 
+        /// Retorna o indice do movimento - Tabela criada por nós para identificar o movimento.
+        /// </summary>
+        public int IdMovimento
+        {
+            get { return _idMovimento; }
+            set { this._idMovimento = value; }
+        }
+
         #endregion
     }
 }
