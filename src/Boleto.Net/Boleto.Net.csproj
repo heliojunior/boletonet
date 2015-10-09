@@ -62,6 +62,7 @@
     <Compile Include="Arquivo\DetalheSegmentoERetornoCNAB240.cs" />
     <Compile Include="Arquivo\DetalheSegmentoWRetornoCNAB240.cs" />
     <Compile Include="Arquivo\HeaderDeArquivoCNAB240.cs" />
+    <Compile Include="Arquivo\HeaderDeArquivoCNAB400.cs" />
     <Compile Include="Arquivo\LinhaDeArquivoGeradaArgs.cs" />
     <Compile Include="Arquivo\DetalheRetornoCNAB240.cs" />
     <Compile Include="Arquivo\DetalheSegmentoURetornoCNAB240.cs" />

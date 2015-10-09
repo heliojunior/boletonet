@@ -16,6 +16,7 @@ namespace BoletoNet
         private DetalheRetorno _detalheRetorno;
         private IArquivoRetorno _arquivoRetorno;
         private HeaderDeArquivoCNAB240 _headerArquivo;
+        //private HeaderDeArquivoCNAB400 _headerArquivo;
 
         #endregion
 
