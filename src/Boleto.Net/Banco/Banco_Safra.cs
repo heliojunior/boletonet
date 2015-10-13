@@ -230,6 +230,34 @@ namespace BoletoNet
         #endregion IBanco Members
 
 
+        # region Métodos de processamento do arquivo retorno CNAB400
+
+        public HeaderDeArquivoCNAB400 LerHeaderArquivoRetornoCNAB400(string registro)
+        {
+            HeaderDeArquivoCNAB400 header = new HeaderDeArquivoCNAB400();
+
+            int data = Convert.ToInt32(registro.Substring(94, 6));
+            header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
+
+            return header;
+        }
+
+        #endregion
+
+        # region Métodos de processamento do arquivo retorno CNAB240
+
+        public HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro)
+        {
+            HeaderDeArquivoCNAB240 header = new HeaderDeArquivoCNAB240();
+
+            int data = Convert.ToInt32(registro.Substring(94, 6));
+            header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
+
+            return header;
+        }
+
+        #endregion
+
         /// <summary>
         /// Efetua as Validações dentro da classe Boleto, para garantir a geração da remessa
         /// </summary>

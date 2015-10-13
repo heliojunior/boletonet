@@ -72,6 +72,7 @@
     <Compile Include="Arquivo\IArquivoRetorno.cs" />
     <Compile Include="Arquivo\LinhaDeArquivoLidaArgs.cs" />
     <Compile Include="Banco\AbstractBanco.cs" />
+    <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Itau.cs" />
     <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Santander.cs" />
     <Compile Include="Boleto\EspecieDocumento\EspecieDocumento_Sicoob.cs" />
     <Compile Include="Boleto\Instrucao\Instrucao_Banestes.cs" />

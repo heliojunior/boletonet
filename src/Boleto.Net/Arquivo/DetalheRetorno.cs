@@ -44,6 +44,8 @@ namespace BoletoNet
         private int _numeroCartorio = 0;
         private string _numeroProtocolo = string.Empty;
         private string _numeroControle = string.Empty;
+        private int _idCodigoMovimento;
+        private CodigoMovimento _codigoMovimento;
 
         #region Propriedades BRB
 
@@ -454,6 +456,26 @@ namespace BoletoNet
         {
             get { return _sequencial; }
             set { _sequencial = value; }
+        }
+
+        public int idCodigoMovimento
+        {
+            get { return _idCodigoMovimento; }
+            set { _idCodigoMovimento = value; }
+        }
+
+        public CodigoMovimento CodigoMovimento
+        {
+            get
+            {
+                _codigoMovimento = new CodigoMovimento(_codigoBanco, _idCodigoMovimento);
+                return _codigoMovimento;
+            }
+            set
+            {
+                _codigoMovimento = value;
+                _idCodigoMovimento = _codigoMovimento.Codigo;
+            }
         }
 
         #endregion

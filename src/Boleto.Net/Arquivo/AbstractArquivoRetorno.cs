@@ -16,7 +16,7 @@ namespace BoletoNet
         private DetalheRetorno _detalheRetorno;
         private IArquivoRetorno _arquivoRetorno;
         private HeaderDeArquivoCNAB240 _headerArquivo;
-        //private HeaderDeArquivoCNAB400 _headerArquivo;
+        private HeaderDeArquivoCNAB400 _headerArquivo400;
 
         #endregion
 
@@ -90,7 +90,13 @@ namespace BoletoNet
         {
             get { return _headerArquivo; }
             set { _headerArquivo = value; }
-        }      
+        }
+
+        public HeaderDeArquivoCNAB400 HeaderArquivo400
+        {
+            get { return _headerArquivo400; }
+            set { _headerArquivo400 = value; }
+        }
         #endregion
 
         #region Métodos

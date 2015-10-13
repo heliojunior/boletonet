@@ -1189,14 +1189,30 @@ namespace BoletoNet
 
         #endregion
 
+        #region Métodos de processamento do arquivo retorno CNAB240
+
+        public HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro)
+        {
+            HeaderDeArquivoCNAB240 header = new HeaderDeArquivoCNAB240();
+
+            int data = Convert.ToInt32(registro.Substring(94, 6));
+            header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
+
+            return header;
+        }
+
+        #endregion
+
         #region Métodos de processamento do arquivo retorno CNAB400
 
         public HeaderDeArquivoCNAB400 LerHeaderArquivoRetornoCNAB400(string registro)
         {
             HeaderDeArquivoCNAB400 header = new HeaderDeArquivoCNAB400();
 
-            int data = Convert.ToInt32(registro.Substring(94, 6));
-            header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
+            string data = registro.Substring(94, 6);
+            data = data.Substring(0, 2) + "/" + data.Substring(2, 2) + "/" + data.Substring(4, 2);
+
+            header.DataGeracao = Convert.ToDateTime(data);
 
             return header;
         }
@@ -1205,9 +1221,14 @@ namespace BoletoNet
         {
             try
             {
-                int dataOcorrencia = Utils.ToInt32(registro.Substring(110, 6));
-                int dataVencimento = Utils.ToInt32(registro.Substring(146, 6));
-                int dataCredito = Utils.ToInt32(registro.Substring(295, 6));
+                string dataOcorrencia = registro.Substring(110, 6);
+                dataOcorrencia = dataOcorrencia.Substring(0, 2) + "/" + dataOcorrencia.Substring(2, 2) + "/" + dataOcorrencia.Substring(4, 2);
+
+                string dataVencimento = registro.Substring(146, 6);
+                dataVencimento = dataVencimento.Substring(0, 2) + "/" + dataVencimento.Substring(2, 2) + "/" + dataVencimento.Substring(4, 2);
+                
+                string dataCredito = registro.Substring(295, 6);
+                dataCredito = dataCredito.Substring(0, 2) + "/" + dataCredito.Substring(2, 2) + "/" + dataCredito.Substring(4, 2);
 
                 DetalheRetorno detalhe = new DetalheRetorno(registro);
 
@@ -1217,21 +1238,21 @@ namespace BoletoNet
                 detalhe.Conta = Utils.ToInt32(registro.Substring(23, 5));
                 detalhe.DACConta = Utils.ToInt32(registro.Substring(28, 1));
                 detalhe.UsoEmpresa = registro.Substring(37, 25);
-                //
+                
                 detalhe.NossoNumeroComDV = registro.Substring(85, 9);
                 detalhe.NossoNumero = registro.Substring(85, 8); //Sem o DV
                 detalhe.DACNossoNumero = registro.Substring(93, 1); //DV
-                //
+                
                 detalhe.Carteira = registro.Substring(107, 1);
                 detalhe.CodigoOcorrencia = Utils.ToInt32(registro.Substring(108, 2));
-
+                
                 //Descrição da ocorrência
                 detalhe.DescricaoOcorrencia = this.Ocorrencia(registro.Substring(108, 2));
 
-                detalhe.DataOcorrencia = Utils.ToDateTime(dataOcorrencia.ToString("##-##-##"));
+                detalhe.DataOcorrencia = Utils.ToDateTime(dataOcorrencia);
                 detalhe.NumeroDocumento = registro.Substring(116, 10);
-                //
-                detalhe.DataVencimento = Utils.ToDateTime(dataVencimento.ToString("##-##-##"));
+                
+                detalhe.DataVencimento = Utils.ToDateTime(dataVencimento);
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(152, 13));
                 detalhe.ValorTitulo = valorTitulo / 100;
                 detalhe.CodigoBanco = Utils.ToInt32(registro.Substring(165, 3));
@@ -1254,19 +1275,21 @@ namespace BoletoNet
                 decimal jurosMora = Convert.ToUInt64(registro.Substring(266, 13));
                 detalhe.JurosMora = jurosMora / 100;
                 // 293 - 3 brancos
-                detalhe.DataCredito = Utils.ToDateTime(dataCredito.ToString("##-##-##"));
+                detalhe.DataCredito = Utils.ToDateTime(dataCredito);
                 detalhe.InstrucaoCancelada = Utils.ToInt32(registro.Substring(301, 4));
                 // 306 - 6 brancos
                 // 311 - 13 zeros
                 detalhe.NomeSacado = registro.Substring(324, 30);
                 // 354 - 23 brancos
-                detalhe.Erros = registro.Substring(377, 8);
+                detalhe.Erros = registro.Substring(377, 8).Trim();
                 // 377 - Registros rejeitados ou alegação do sacado
                 // 386 - 7 brancos
 
                 detalhe.CodigoLiquidacao = registro.Substring(392, 2);
                 detalhe.NumeroSequencial = Utils.ToInt32(registro.Substring(394, 6));
                 detalhe.ValorPago = detalhe.ValorPrincipal;
+
+                detalhe.CodigoMovimento = new CodigoMovimento(Codigo, detalhe.CodigoOcorrencia);
 
                 // A correspondência de Valor Pago no RETORNO ITAÚ é o Valor Principal (Valor lançado em Conta Corrente - Conforme Manual)
                 // A determinação se Débito ou Crédito deverá ser feita nos aplicativos por se tratar de personalização.

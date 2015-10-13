@@ -101,6 +101,8 @@ namespace BoletoNet
 
         HeaderDeArquivoCNAB240 LerHeaderArquivoRetornoCNAB240(string registro);
 
+        HeaderDeArquivoCNAB400 LerHeaderArquivoRetornoCNAB400(string registro);
+
         DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro);
 
         DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro);
