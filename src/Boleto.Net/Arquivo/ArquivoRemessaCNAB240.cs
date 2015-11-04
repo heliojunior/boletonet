@@ -155,11 +155,13 @@ namespace BoletoNet
                         numeroRegistro++;
                         numeroRegistroDetalhe++;
 
-                        strline = boleto.Banco.GerarDetalheSegmentoQRemessa(boleto, numeroRegistroDetalhe, TipoArquivo.CNAB240);
-                        incluiLinha.WriteLine(strline);
-                        OnLinhaGerada(boleto, strline, EnumTipodeLinha.DetalheSegmentoQ);
-                        numeroRegistro++;
-                        numeroRegistroDetalhe++;
+                        if (((banco.Codigo == 33) && (boleto.Remessa.CodigoOcorrencia == "01")) || (banco.Codigo != 33)){
+                            strline = boleto.Banco.GerarDetalheSegmentoQRemessa(boleto, numeroRegistroDetalhe, TipoArquivo.CNAB240);
+                            incluiLinha.WriteLine(strline);
+                            OnLinhaGerada(boleto, strline, EnumTipodeLinha.DetalheSegmentoQ);
+                            numeroRegistro++;
+                            numeroRegistroDetalhe++;
+                        }
 
                         if (boleto.ValorMulta > 0)
                         {
