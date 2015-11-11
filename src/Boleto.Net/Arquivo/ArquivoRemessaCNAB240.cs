@@ -163,7 +163,9 @@ namespace BoletoNet
                             numeroRegistroDetalhe++;
                         }
 
-                        if (boleto.ValorMulta > 0)
+                        if ((boleto.ValorMulta > 0) && ((banco.Codigo == 33 
+                            && ((boleto.Remessa.CodigoOcorrencia == "01") || (boleto.Remessa.CodigoOcorrencia == "10") || (boleto.Remessa.CodigoOcorrencia == "31"))) 
+                            || (banco.Codigo != 33)))
                         {
                             strline = boleto.Banco.GerarDetalheSegmentoRRemessa(boleto, numeroRegistroDetalhe, TipoArquivo.CNAB240);
                             incluiLinha.WriteLine(strline);
