@@ -56,6 +56,7 @@ namespace BoletoNet
 
         private string _tipoModalidade = string.Empty;
         private Remessa _remessa;
+        private Guid _idReceita;
         #endregion
 
         #region Construtor
@@ -513,6 +514,12 @@ namespace BoletoNet
         {
             get { return _remessa; }
             set { _remessa = value; }
+        }
+
+        public Guid IdReceita
+        {
+            get { return _idReceita; }
+            set { _idReceita = value; }
         }
         #endregion Properties
 
