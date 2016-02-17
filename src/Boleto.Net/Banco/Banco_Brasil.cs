@@ -130,7 +130,8 @@ namespace BoletoNet
                     case 7:
                         if (boleto.NossoNumero.Length > 17)
                             throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                        //boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                        //boleto.NossoNumero = string.Format("{1}", boleto.NossoNumero);
                         break;
                     default:
                         throw new NotImplementedException(string.Format("Para a carteira {0}, o número do convênio deve ter 6 ou 7 posições", boleto.Carteira));
@@ -449,7 +450,11 @@ namespace BoletoNet
             #endregion Agência e Conta Corrente
 
             //Atribui o nome do banco ao local de pagamento
-            boleto.LocalPagamento = String.IsNullOrEmpty(boleto.LocalPagamento) ? Nome : boleto.LocalPagamento;
+            boleto.LocalPagamento = "PAGÁVEL EM QUALQUER BANCO ATÉ O VENCIMENTO";
+            //boleto.LocalPagamento = String.IsNullOrEmpty(boleto.LocalPagamento) ? Nome : boleto.LocalPagamento;
+
+            if (EspecieDocumento.ValidaSigla(boleto.EspecieDocumento) == "")
+                boleto.EspecieDocumento = new EspecieDocumento_BancoBrasil("2");
 
             //Verifica se data do processamento é valida
             //if (boleto.DataProcessamento.ToString("dd/MM/yyyy") == "01/01/0001")
@@ -1248,10 +1253,11 @@ namespace BoletoNet
                 // 2 ou 3 – para carteira 11/17 modalidade Vinculada/Caucionada e carteira 31; 
                 // 4 – para carteira 11/17 modalidade Descontada e carteira 51; 
                 // 7 – para carteira 17 modalidade Simples.
-                if (boleto.Carteira.Equals("17-019"))
-                    _segmentoP += "7";
-                else
-                    _segmentoP += "0";
+                _segmentoP += Utils.FitStringLength(boleto.Carteira, 1, 1, '0', 0, true, true, false);
+                //if (boleto.Carteira.Equals("17-019"))
+                //    _segmentoP += "7";
+                //else
+                //    _segmentoP += "0";
 
                 // Campo não tratado pelo BB. Forma de cadastramento do título no banco. Pode ser branco/espaço, 0, 1=cobrança registrada, 2=sem registro.
                 _segmentoP += "1";
@@ -1590,7 +1596,8 @@ namespace BoletoNet
                 // - nº da carteira 9(02)
                 // - variação (se houver) 9(03)
                 if (cedente.Carteira.Length == 2)
-                    _headerLote += cedente.Carteira.ToString() + "000  ";
+                    //_headerLote += cedente.Carteira.ToString() + "000  ";
+                    _headerLote += cedente.Carteira.ToString() + "019  "; // 019 é a variação da carteira. Até o presente momento para o banco do Brasil sempre foi 019 a variação das carteiras
                 else
                     _headerLote += cedente.Carteira.Replace("-", "") + "  ";
 

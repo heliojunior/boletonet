@@ -571,7 +571,7 @@ namespace BoletoNet
                 .Replace("@LINHADIGITAVEL", Boleto.CodigoBarra.LinhaDigitavel)
                 .Replace("@LOCALPAGAMENTO", Boleto.LocalPagamento)
                 .Replace("@DATAVENCIMENTO", dataVencimento)
-                .Replace("@CEDENTE", Cedente.Nome)
+                .Replace("@CEDENTE", Cedente.Nome +" CNPJ: "+ Cedente.CPFCNPJ.ToString())
                 .Replace("@DATADOCUMENTO", Boleto.DataDocumento.ToString("dd/MM/yyyy"))
                 .Replace("@NUMERODOCUMENTO", Boleto.NumeroDocumento)
                 .Replace("@ESPECIEDOCUMENTO", EspecieDocumento.ValidaSigla(Boleto.EspecieDocumento))
