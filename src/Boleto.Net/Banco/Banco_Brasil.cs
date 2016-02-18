@@ -1641,7 +1641,12 @@ namespace BoletoNet
                 else
                     _header += "2";
                 _header += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true);
-                _header += _brancos20;
+                //_header += _brancos20;
+                _header += Utils.FitStringLength(cedente.Convenio.ToString(), 9, 9, '0', 0, true, true, true);  // Convenio
+                _header += "0014";
+                _header += Utils.FitStringLength(cedente.Carteira.ToString(), 2, 2, '0', 0, true, true, true);  // Carteira
+                _header += "019";  // Variação da Carteira
+                _header += " ";
                 _header += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, ' ', 0, true, true, false);
                 _header += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
