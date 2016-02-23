@@ -212,7 +212,8 @@ namespace BoletoNet
 
         public string CalculaDigitoVerificador(Boleto boleto)
         {
-            return boleto.DigitoNossoNumero;
+            return Mod11Bradesco(boleto.Carteira + boleto.NossoNumero, 7);
+            //return boleto.DigitoNossoNumero;
         }
 
         public override string GerarHeaderRemessa(string numeroConvenio, Cedente cedente, TipoArquivo tipoArquivo, int numeroArquivoRemessa, Boleto boletos)
