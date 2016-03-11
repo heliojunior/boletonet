@@ -60,8 +60,8 @@ namespace BoletoNet
         {
             switch (especie)
             {
-                case EnumEspecieDocumento_Itau.DuplicataMercantil: return "1";
-                case EnumEspecieDocumento_Itau.NotaPromissoria: return "2";
+                case EnumEspecieDocumento_Itau.DuplicataMercantil: return "2";
+                case EnumEspecieDocumento_Itau.NotaPromissoria: return "1";
                 case EnumEspecieDocumento_Itau.NotaSeguro: return "3";
                 case EnumEspecieDocumento_Itau.MensalidadeEscolar: return "4";
                 case EnumEspecieDocumento_Itau.Recibo: return "5";
@@ -82,8 +82,8 @@ namespace BoletoNet
         {
             switch (codigo)
             {
-                case "1":return EnumEspecieDocumento_Itau.DuplicataMercantil;
-                case "2":return EnumEspecieDocumento_Itau.NotaPromissoria;
+                case "2":return EnumEspecieDocumento_Itau.DuplicataMercantil;
+                case "1":return EnumEspecieDocumento_Itau.NotaPromissoria;
                 case "3":return EnumEspecieDocumento_Itau.NotaSeguro;
                 case "4":return EnumEspecieDocumento_Itau.MensalidadeEscolar;
                 case "5":return EnumEspecieDocumento_Itau.Recibo;
