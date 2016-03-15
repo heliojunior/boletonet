@@ -56,8 +56,8 @@ namespace BoletoNet
         {
             switch (especie)
             {
-                case EnumEspecieDocumento_Bradesco.DuplicataMercantil: return "2";
-                case EnumEspecieDocumento_Bradesco.NotaPromissoria: return "1";
+                case EnumEspecieDocumento_Bradesco.DuplicataMercantil: return "1";
+                case EnumEspecieDocumento_Bradesco.NotaPromissoria: return "2";
                 case EnumEspecieDocumento_Bradesco.NotaSeguro: return "3";
                 case EnumEspecieDocumento_Bradesco.CobrancaSeriada: return "4";
                 case EnumEspecieDocumento_Bradesco.Recibo: return "5";

@@ -60,8 +60,8 @@ namespace BoletoNet
         {
             switch (especie)
             {
-                case EnumEspecieDocumento_Sudameris.DuplicataMercantil: return "2";
-                case EnumEspecieDocumento_Sudameris.NotaPromissoria: return "1";
+                case EnumEspecieDocumento_Sudameris.DuplicataMercantil: return "1";
+                case EnumEspecieDocumento_Sudameris.NotaPromissoria: return "2";
                 case EnumEspecieDocumento_Sudameris.NotaSeguro: return "3";
                 case EnumEspecieDocumento_Sudameris.MensalidadeEscolar: return "4";
                 case EnumEspecieDocumento_Sudameris.Recibo: return "5";

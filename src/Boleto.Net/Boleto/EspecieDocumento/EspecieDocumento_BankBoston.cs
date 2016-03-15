@@ -55,8 +55,8 @@ namespace BoletoNet
         {
             switch (especie)
             {
-                case EnumEspecieDocumento_BankBoston.DuplicataMercantil: return "2";
-                case EnumEspecieDocumento_BankBoston.DuplicataServico: return "1";
+                case EnumEspecieDocumento_BankBoston.DuplicataMercantil: return "1";
+                case EnumEspecieDocumento_BankBoston.DuplicataServico: return "2";
                 case EnumEspecieDocumento_BankBoston.NotaSeguro: return "3";
                 case EnumEspecieDocumento_BankBoston.ReciboEscolar: return "4";
                 case EnumEspecieDocumento_BankBoston.ReciboAssociacao: return "5";
