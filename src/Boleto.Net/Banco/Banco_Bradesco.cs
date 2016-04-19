@@ -630,23 +630,15 @@ namespace BoletoNet
 
                 _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true);
 
-                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 9, 9, '0', 0, true, true, true); // Código do Convênio no Banco ??????? Verificar se tá certo
-                ConvenioFormatatado += "0014";
-                // O Código da carteira é dividida em 2 partes:
-                // - nº da carteira 9(02)
-                // - variação (se houver) 9(03)
-                if (cedente.Carteira.Length == 2)
-                    ConvenioFormatatado += cedente.Carteira.ToString() + "000  ";
-                else
-                    ConvenioFormatatado += cedente.Carteira.Replace("-", "") + "  ";
+                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 20, 20, '0', 0, true, true, true);
 
-                _headerLote += Utils.FormatCode(ConvenioFormatatado, "0", 20, true); //
+                _headerLote += Utils.FormatCode(ConvenioFormatatado, "0", 20, true);
 
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
-                // Dígito verificador  da Agência/Conta.  
+                  
                 _headerLote += " ";
                 _headerLote += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false);
                 _headerLote += Utils.FormatCode("", " ", 30); // nome do banco
@@ -656,8 +648,8 @@ namespace BoletoNet
                 _headerLote += DateTime.Now.ToString("ddMMyyyy");
                 _headerLote += DateTime.Now.ToString("HHmmss");
                 _headerLote += Utils.FitStringLength(numeroArquivoRemessa.ToString(), 6, 1, '0', 0, true, true, true);
-                _headerLote += "080"; // layout do arquivo-
-                _headerLote += Utils.FormatCode("", " ", 5); //densidade da gravação
+                _headerLote += "080"; // layout do arquivo
+                _headerLote += Utils.FormatCode("", " ", 10); //densidade da gravação
                 _headerLote += Utils.FormatCode("", " ", 40);
                 _headerLote += Utils.FormatCode("", " ", 29);
 
@@ -681,7 +673,7 @@ namespace BoletoNet
             try
             {
 
-                _headerLote = this.Codigo.ToString();                        // Código do Banco na Compensação
+                _headerLote = this.Codigo.ToString();       // Código do Banco na Compensação
                 _headerLote += Lote;                        // Lote de Serviço
                 _headerLote += "1";                         // Tipo de Registro
                 _headerLote += TipoOperacao;                // Tipo de Operação
@@ -695,19 +687,10 @@ namespace BoletoNet
                 else
                     _headerLote += "2";
 
-                _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true); // Nº de Inscrição da Empresa
+                _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 15, 15, '0', 0, true, true, true); // Nº de Inscrição da Empresa
                 
-                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 9, 9, '0', 0, true, true, true); // Código do Convênio no Banco ??????? Verificar se tá certo
-                ConvenioFormatatado += "0014";
-                // O Código da carteira é dividida em 2 partes:
-                // - nº da carteira 9(02)
-                // - variação (se houver) 9(03)
-                if (cedente.Carteira.Length == 2)
-                    ConvenioFormatatado += cedente.Carteira.ToString() + "000  ";
-                else
-                    ConvenioFormatatado += cedente.Carteira.Replace("-", "") + "  ";
-
-                _headerLote += Utils.FormatCode(ConvenioFormatatado,"0" ,20,true); //
+                string ConvenioFormatatado = Utils.FitStringLength(numeroConvenio, 20, 20, '0', 0, true, true, true); // Código do Convênio no Banco ??????? Verificar se tá certo
+                _headerLote += Utils.FormatCode(ConvenioFormatatado,"0",20,true); //
 
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);            // Agência Mantenedora da Conta
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);      // Dígito Verificador da Conta
@@ -952,9 +935,9 @@ namespace BoletoNet
                 _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
                 _segmentoR += "R 01";
                 // Desconto 2
-                _segmentoR += "0000000000000000000000"; //22 zeros
+                _segmentoR += "000000000000000000000000"; //24 zeros
                 // Desconto 3
-                _segmentoR += "0000000000000000000000"; //24 zeros
+                _segmentoR += "000000000000000000000000"; //24 zeros
 
                 if (boleto.PercMulta > 0)
                 {
