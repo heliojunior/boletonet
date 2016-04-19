@@ -1480,7 +1480,7 @@ namespace BoletoNet
         {
             HeaderDeArquivoCNAB240 header = new HeaderDeArquivoCNAB240();
 
-            int data = Convert.ToInt32(registro.Substring(94, 6));
+            int data = Convert.ToInt32(registro.Substring(143, 8));
             header.DataGeracao = Convert.ToDateTime(data.ToString("##-##-####"));
 
             return header;

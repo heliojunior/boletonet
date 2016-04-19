@@ -209,11 +209,15 @@ namespace BoletoNet
                 Conta = Convert.ToInt32(registro.Substring(23, 12));
                 DigitoConta = registro.Substring(35, 1);
 
-                NossoNumero = registro.Substring(37, 20);
+                NossoNumero = registro.Substring(45, 20);
                 CodigoCarteira = Convert.ToInt32(registro.Substring(57, 1));
                 NumeroDocumento = registro.Substring(58, 15);
+
                 int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
-                DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+
+                if (dataVencimento > 0)
+                    DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(81, 15));
                 ValorTitulo = valorTitulo / 100;
                 IdentificacaoTituloEmpresa = registro.Substring(105, 25);
@@ -223,7 +227,7 @@ namespace BoletoNet
                 decimal valorTarifas = Convert.ToUInt64(registro.Substring(198, 15));
                 ValorTarifas = valorTarifas / 100;
                 CodigoRejeicao = registro.Substring(213, 10);
-                UsoFebraban = registro.Substring(224, 17);
+                //UsoFebraban = registro.Substring(224, 17);
             }
             catch (Exception ex)
             {

@@ -84,8 +84,8 @@ namespace BoletoNet
                         throw new Exception("Código do banco não implementando: " + codigoBanco);
                     //237 - Bradesco
                     case 237:
-                        //_ICodigoMovimento = new CodigoMovimento_Bradesco();
-                        throw new Exception("Código do banco não implementando: " + codigoBanco);
+                        _ICodigoMovimento = new CodigoMovimento_Bradesco(codigoMovimento);
+                        break;
                     //347 - Sudameris
                     case 347:
                         //_ICodigoMovimento = new CodigoMovimento_Sudameris();
