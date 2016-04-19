@@ -82,8 +82,8 @@ namespace BoletoNet
         {
             switch (codigo)
             {
-                case "1": return EnumEspecieDocumento_Sudameris.DuplicataMercantil;
-                case "2": return EnumEspecieDocumento_Sudameris.NotaPromissoria;
+                case "2": return EnumEspecieDocumento_Sudameris.DuplicataMercantil;
+                case "1": return EnumEspecieDocumento_Sudameris.NotaPromissoria;
                 case "3": return EnumEspecieDocumento_Sudameris.NotaSeguro;
                 case "4": return EnumEspecieDocumento_Sudameris.MensalidadeEscolar;
                 case "5": return EnumEspecieDocumento_Sudameris.Recibo;
