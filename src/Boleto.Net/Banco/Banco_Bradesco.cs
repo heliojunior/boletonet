@@ -476,6 +476,47 @@ namespace BoletoNet
                 return (11 - r).ToString();
         }
 
+        public override DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
+        {
+            try
+            {
+                if (!registro.Substring(13, 1).Equals(@"T"))
+                {
+                    throw new Exception("Registro inválida. O detalhe não possuí as características do segmento T.");
+                }
+                DetalheSegmentoTRetornoCNAB240 segmentoT = new DetalheSegmentoTRetornoCNAB240(registro);
+
+                segmentoT.CodigoBanco = Convert.ToInt32(registro.Substring(0, 3));
+                segmentoT.Agencia = Convert.ToInt32(registro.Substring(17, 5));
+                segmentoT.DigitoAgencia = registro.Substring(22, 1);
+                segmentoT.Conta = Convert.ToInt32(registro.Substring(23, 12));
+                segmentoT.DigitoConta = registro.Substring(35, 1);
+                segmentoT.idCodigoMovimento = Convert.ToInt32(registro.Substring(15, 2));
+                segmentoT.CodigoMovimento = new CodigoMovimento(237, segmentoT.idCodigoMovimento);
+                segmentoT.NossoNumero = registro.Substring(45, 12);
+                segmentoT.CodigoCarteira = Convert.ToInt32(registro.Substring(57, 1));
+                segmentoT.NumeroDocumento = registro.Substring(58, 15);
+
+                int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
+                if (dataVencimento > 0)
+                    segmentoT.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+
+                segmentoT.ValorTitulo = Convert.ToDecimal(registro.Substring(81, 15)) / 100;
+                segmentoT.IdentificacaoTituloEmpresa = registro.Substring(105, 25);
+                segmentoT.TipoInscricao = Convert.ToInt32(registro.Substring(132, 1));
+                segmentoT.NumeroInscricao = registro.Substring(133, 15);
+                segmentoT.NomeSacado = registro.Substring(148, 40);
+                segmentoT.ValorTarifas = Convert.ToDecimal(registro.Substring(198, 15)) / 100;
+                segmentoT.CodigoRejeicao = registro.Substring(213, 10);
+
+                return segmentoT;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao processar arquivo de RETORNO - SEGMENTO T.", ex);
+            }
+        }
+
         public override DetalheRetorno LerDetalheRetornoCNAB400(string registro)
         {
             try
