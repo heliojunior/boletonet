@@ -709,7 +709,7 @@ namespace BoletoNet
             /* Arquivo LAY-OUT CNAB 240 FEBRABAN VERSÃO 8.0 DE 31/08/2004. */
             string _headerLote = "";
             string Lote = "0001";
-            string TipoOperacao = "C";
+            string TipoOperacao = "R"; //Tipo de Operacao 'R' - Arquivo Remessa 
 
             try
             {
