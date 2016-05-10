@@ -774,14 +774,12 @@ namespace BoletoNet
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
-                // Dígito verificador  da Agência/Conta.  Campo não tratado pelo BB.  Informar ESPAÇO ou ZERO.
-                _segmentoP += " "; // jefhtavares O banco não aceita mais esse campo como 0 (zero), o campo deverá ser enviado em branco
+                _segmentoP += Utils.FitStringLength(boleto.Cedente.Carteira, 3, 3, '0', 0, true, true, true);
 
                 boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11); 
                 _nossoNumero = boleto.NossoNumero;
 
-                _segmentoP += Utils.FormatCode("", " ", 3); // Identificação do Produto
-                _segmentoP += Utils.FormatCode("", " ", 5); //Zeros
+                _segmentoP += Utils.FormatCode("", "0", 6); //Zeros
 
                 // Importante: Nosso número, alinhar à esquerda com brancos à direita (conforme manual)
                 _segmentoP += Utils.FitStringLength(_nossoNumero, 11, 11, ' ', 0, true, true, false);
