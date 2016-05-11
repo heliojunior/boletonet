@@ -682,7 +682,7 @@ namespace BoletoNet
                   
                 _headerLote += " ";
                 _headerLote += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false);
-                _headerLote += Utils.FormatCode("", " ", 30); // nome do banco
+                _headerLote += Utils.FitStringLength("BRADESCO", 30, 30, ' ', 0, true, true, false); // nome do banco
                 _headerLote += Utils.FormatCode("", " ", 10);
 
                 _headerLote += "1"; // fixo - '1' = Remessa, '2' = Retorno
@@ -774,12 +774,13 @@ namespace BoletoNet
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
+                _segmentoP += "0"; //Dígito Verificador da Ag/Conta
                 _segmentoP += Utils.FitStringLength(boleto.Cedente.Carteira, 3, 3, '0', 0, true, true, true);
 
                 boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11); 
                 _nossoNumero = boleto.NossoNumero;
 
-                _segmentoP += Utils.FormatCode("", "0", 6); //Zeros
+                _segmentoP += Utils.FormatCode("", "0", 5); //Zeros
 
                 // Importante: Nosso número, alinhar à esquerda com brancos à direita (conforme manual)
                 _segmentoP += Utils.FitStringLength(_nossoNumero, 11, 11, ' ', 0, true, true, false);
