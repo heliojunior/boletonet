@@ -503,7 +503,8 @@ namespace BoletoNet
 
                 segmentoT.ValorTitulo = Convert.ToDecimal(registro.Substring(81, 15)) / 100;
                 segmentoT.IdentificacaoTituloEmpresa = registro.Substring(105, 25);
-                segmentoT.TipoInscricao = Convert.ToInt32(registro.Substring(132, 1));
+                segmentoT.TipoInscricao = (registro.Substring(132, 1).Trim().Equals(String.Empty)) ? 0 : Convert.ToInt32(registro.Substring(132, 1));
+
                 segmentoT.NumeroInscricao = registro.Substring(133, 15);
                 segmentoT.NomeSacado = registro.Substring(148, 40);
                 segmentoT.ValorTarifas = Convert.ToDecimal(registro.Substring(198, 15)) / 100;
